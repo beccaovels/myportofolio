@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 # Load enviroment variables from .env file
 load_dotenv()
 
+# add deployment here
 ALLOWED_HOSTS = ["localhost","127.0.0.1","rebecca-love-myportofolio.pws.cs.ui.ac.id"]
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
