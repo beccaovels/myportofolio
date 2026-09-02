@@ -60,7 +60,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'portofolio.urls'
 
-# templates -> list holding the configuration for how Django handles and processes the HTML files
+# templates : list holding the configuration for how Django handles and processes the HTML files
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
