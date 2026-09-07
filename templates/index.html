@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,9 +44,18 @@
                         </div>
                     </dl>
                     <div class="social-links">
-                        <a href="https://github.com/beccaovels" class="social-link">GitHub</a>
-                        <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="social-link">LinkedIn</a>
-                        <a href="mailto:rebecca.love@ui.ac.id" class="social-link">Email</a>
+                        <a href="https://github.com/beccaovels" class="btn btn-small btn-primary">
+                            <span>Github</span>
+                            <img src="{% static 'img/Github.svg' %}" alt="GitHub Logo" class="btn-icon">
+                        </a>
+                        <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="btn btn-small btn-primary">
+                            <span>LinkedIn</span>
+                            <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon linkedin-icon">
+                        </a>
+                        <a href="mailto:rebecca.love@ui.ac.id" class="btn btn-small btn-primary">
+                            <span>Email</span>
+                            <img src="{% static 'img/Mail.svg' %}" alt="Email Logo" class="btn-icon">
+                        </a>
                     </div>
                 </div>
             </div>

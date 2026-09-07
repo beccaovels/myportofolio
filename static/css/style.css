@@ -9,6 +9,7 @@
     --ink: #242238;
     --paper: #f6f1e7;
     --accent: #8fa56a;
+    --accent-dark: #565F48;
     --accent-secondary: #e8d66a;
 }
 
@@ -27,6 +28,54 @@ h1, .brand {
     max-width: 960px;
     margin: 0 auto;
     padding: 0 1.5rem;
+}
+
+/*reusable UI items*/
+.btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-small {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+    width: 135px;
+    height: 42px;
+    box-sizing: border-box;
+}
+
+.btn-large {
+    padding: 0.75rem 1.75rem;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--ink);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-dark);
+}
+
+.btn-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-left: 0.5rem;
+    object-fit: contain;
+}
+
+.linkedin-icon {
+    width: 0.7rem;  
+    height: 0.7rem;
 }
 
 /* header with flexbox */
