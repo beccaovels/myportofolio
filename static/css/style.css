@@ -91,7 +91,7 @@ body {
     height: 3rem;
     display: block;
     width: auto;
-    transform: translateY(2.5px); /* Pushes the logo down slightly */
+    transform: translateY(2.5px); 
 }
 
 .nav-links {
@@ -111,10 +111,7 @@ body {
     opacity: 0.8;
 }
 
-/* =========================
-   HERO SECTION
-   ========================= */
-
+/* hero section */
 .hero {
     padding: 100px 0 5rem;
 }
@@ -135,9 +132,7 @@ body {
 }
 
 
-/* =========================
-   PHOTO
-   ========================= */
+/*hero-photo*/
 
 .hero-photo {
     width: 455px;
@@ -165,9 +160,7 @@ body {
 }
 
 
-/* =========================
-   TEXT
-   ========================= */
+/*hero-texts*/
 
 .hero-content {
     display: flex;
@@ -213,10 +206,7 @@ body {
 }
 
 
-/* =========================
-   BIO
-   ========================= */
-
+/*hero-bio*/
 .hero-details {
     display: flex;
     flex-direction: column;
@@ -235,10 +225,7 @@ body {
 }
 
 
-/* =========================
-   META
-   ========================= */
-
+/*hero-meta*/
 .meta-list {
     display: flex;
     gap: 80px;
@@ -266,10 +253,7 @@ body {
 }
 
 
-/* =========================
-   SOCIAL BUTTONS
-   ========================= */
-
+/*hero-social-buttons*/
 .social-links {
     display: flex;
     gap: 15px;
