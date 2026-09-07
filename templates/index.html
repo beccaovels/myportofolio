@@ -88,7 +88,7 @@
     <div class="container">
 
         <header class="section-intro">
-            <h2><span class="section-icon" aria-hidden="true">✳</span> Education</h2>
+        <img src="{% static 'img/education-fix.svg' %}" alt="Education" class="education-logo">            
             <p class="section-desc">
                 Shaped by strong academic environments and leadership roles, the core of this path centers on
                 computer science. At the heart of this work is the realization that technology can innovate
@@ -98,7 +98,53 @@
 
         <div class="education-body">
             <div class="education-grid">
-                <!-- cards added in next commit -->
+                <article class="edu-card">
+                    <a href="#detail-ui" class="edu-card-link" aria-label="View Universitas Indonesia details">
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/ui-fasilkom-logo.png' %}" alt="Universitas Indonesia Fakultas Ilmu Komputer logo">
+                    </div>
+                    <h3>Universitas Indonesia</h3>
+                    <p class="edu-date">2025 - Present</p>
+                    <p class="edu-text">
+                        Currently pursuing an undergraduate degree in the Computer Science International Program at
+                        Fasilkom Universitas Indonesia. The journey through Fasilkom UI has been a transformative
+                        path of mastering…
+                    </p>
+                </article>
+
+                <article class="edu-card">
+                    <a href="#detail-smak" class="edu-card-link" aria-label="View SMAK PENABUR Gading Serpong details">
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/penabur-logo.png' %}" alt="BPK PENABUR school logo">
+                    </div>
+                    <h3>SMAK PENABUR Gading Serpong</h3>
+                    <p class="edu-date">2022 - 2025</p>
+                    <p class="edu-text">
+                        Serving as Student Council President and Deputy Editor-in-Chief of the Yearbook Committee
+                        built a robust foundation in collaborative leadership and effective team management. This
+                        period was pivotal in bridging organizatio..
+                    </p>
+                </article>
+
+                <article class="edu-card">
+                    <a href="#detail-smpk" class="edu-card-link" aria-label="View SMPK PENABUR Bintaro Jaya details">
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/penabur-logo.png' %}" alt="BPK PENABUR school logo">
+                    </div>
+                    <h3>SMPK PENABUR Bintaro Jaya</h3>
+                    <p class="edu-date">2022 - 2025</p>
+                    <p class="edu-text">
+                        Early leadership roles as Student Council Secretary established a critical foundation in
+                        public speaking and organizational communication, directly boosting the confidence
+                        needed for future …
+                    </p>
+                </article>
             </div>
         </div>
 

@@ -270,6 +270,12 @@ body {
     max-width: 1120px;
 }
 
+.education-logo {
+    width: 180px;
+    height: auto;
+    display: block;
+}
+
 .section-intro h2 {
     font-family: "Young Serif", serif;
     color: var(--paper);
