@@ -318,7 +318,7 @@ body {
 
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 420px; /* fixed card height — adjust to your ideal size */
 }
 
 .edu-card:hover {
@@ -387,6 +387,32 @@ body {
     font-size: 0.9rem;
     line-height: 1.55;
     flex-grow: 1;
+    min-height: 0;      
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.edu-text::-webkit-scrollbar {
+    width: 4px;
+}
+
+.edu-text::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.edu-text::-webkit-scrollbar-thumb {
+    background: rgba(246, 241, 231, 0.3);
+    border-radius: 2px;
+}
+
+.edu-text::-webkit-scrollbar-thumb:hover {
+    background: rgba(246, 241, 231, 0.5);
+}
+
+.edu-text::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
 }
 
 /*mobile responsiveness*/
