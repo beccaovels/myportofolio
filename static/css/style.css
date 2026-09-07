@@ -20,7 +20,7 @@ body {
     line-height: 1.6;
 }
 
-h1, .brand {
+h1 {
     font-family: "Young Serif", -apple-system, sans-serif;
 }
 
@@ -73,14 +73,47 @@ h1, .brand {
     object-fit: contain;
 }
 
-.linkedin-icon {
+.btn-icon.arrow-icon {
     width: 0.7rem;  
     height: 0.7rem;
 }
 
 /* header with flexbox */
 .site-header {
-    border-bottom: 1px solid var(--line);
+    border-bottom: none;
+    padding: 1.5rem 0;
+    background-color: transparent;
+}
+
+.navbar {
+    max-width: 1062px;
+    width: 100%;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    margin: 0 auto;
+    background-color: var(--ink);
+    border-radius: 44px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a:not(.btn) {
+    color: var(--paper);        
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: opacity 0.2s ease;
+}
+
+.nav-links a:not(.btn):hover {
+    opacity: 0.8;
 }
 
 .site-header .container {
@@ -91,10 +124,15 @@ h1, .brand {
 }
 
 .brand {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--ink);
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.brand img {
+    height: 3rem;
+    display: block;
+    width: auto;
+    transform: translateY(1px);
 }
 
 .site-header nav {

@@ -12,13 +12,18 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <a href="#profile" class="brand">Rebecca</a>
-            <nav>
-                <a href="#profile">Profile</a>
-            </nav>
-        </div>
-    </header>
+        <div class="container navbar">
+            <a href="#profile" class="brand">
+                <img src="{% static 'img/rebecca-logo.svg' %}" alt="Rebecca Brand Logo">            <nav class="nav-links">
+            <a href="#profile">Home</a>
+            <a href="#about">About</a>
+            <a href="#" class="btn btn-small btn-primary">
+                <span>View CV</span>
+                <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon arrow-icon">
+            </a>
+        </nav>
+    </div>
+</header>
 
     <main>
         <section class="hero" id="profile">
@@ -50,7 +55,7 @@
                         </a>
                         <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="btn btn-small btn-primary">
                             <span>LinkedIn</span>
-                            <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon linkedin-icon">
+                            <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon arrow-icon">
                         </a>
                         <a href="mailto:rebecca.love@ui.ac.id" class="btn btn-small btn-primary">
                             <span>Email</span>
