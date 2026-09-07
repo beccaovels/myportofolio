@@ -1,4 +1,4 @@
-/*basic reset & custom properties */
+/* Basic reset & custom properties */
 * {
     margin: 0;
     padding: 0;
@@ -20,18 +20,14 @@ body {
     line-height: 1.6;
 }
 
-h1 {
-    font-family: "Young Serif", -apple-system, sans-serif;
-}
-
 .container {
     max-width: 960px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
 
-/*reusable UI items*/
-.btn{
+/* Reusable UI items */
+.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -49,12 +45,6 @@ h1 {
     font-size: 0.85rem;
     width: 135px;
     height: 42px;
-    box-sizing: border-box;
-}
-
-.btn-large {
-    padding: 0.75rem 1.75rem;
-    font-size: 1rem;
 }
 
 .btn-primary {
@@ -73,14 +63,13 @@ h1 {
     object-fit: contain;
 }
 
-.btn-icon.arrow-icon {
+.arrow-icon {
     width: 0.7rem;  
     height: 0.7rem;
 }
 
-/* header with flexbox */
+/* Header */
 .site-header {
-    border-bottom: none;
     padding: 1.5rem 0;
     background-color: transparent;
 }
@@ -93,10 +82,16 @@ h1 {
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    box-sizing: border-box;
-    margin: 0 auto;
     background-color: var(--ink);
     border-radius: 44px;
+    margin: 0 auto;
+}
+
+.brand img {
+    height: 3rem;
+    display: block;
+    width: auto;
+    transform: translateY(2.5px); /* Pushes the logo down slightly */
 }
 
 .nav-links {
@@ -116,168 +111,168 @@ h1 {
     opacity: 0.8;
 }
 
-.site-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 1.5rem;
-}
+/* =========================
+   HERO SECTION
+   ========================= */
 
-.brand {
-    display: flex;
-    align-items: center;
-}
-
-.brand img {
-    height: 3rem;
-    display: block;
-    width: auto;
-    transform: translateY(1px);
-}
-
-.site-header nav {
-    display: flex;
-    gap: 2rem;
-}
-
-.site-header nav a {
-    color: var(--ink);
-    text-decoration: none;
-    font-size: 0.95rem;
-}
-
-/* header section with css grid*/
 .hero {
-    padding: 4.5rem 0 5rem;
+    padding: 100px 0 5rem;
+}
+
+.hero-card-box {
+    max-width: 1035px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    transform: translateX(-70px);
 }
 
 .hero-grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    grid-template-areas:
-        "identity photo"
-        "details  photo";
-    gap: 1.5rem 3rem;
+    grid-template-columns: 465px 1fr;
+    gap: 2rem;
+    align-items: center;
 }
 
-.hero-identity {
-    grid-area: identity;
+
+/* =========================
+   PHOTO
+   ========================= */
+
+.hero-photo {
+    width: 455px;
+    height: 455px;
+
+    margin: 0;
+    padding: 0;
+
+    position: relative;
 }
 
-.hero-details {
-    grid-area: details;
+.hero-photo img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border: 7px solid var(--ink);
+    border-radius: 16px;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================
+   TEXT
+   ========================= */
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    width: calc(100% + 140px);
+    min-width: 0;
 }
 
 .hero-kicker {
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent-dark);
+    font-family: "Valley Sans", sans-serif;
+
+    font-size: 32px;
+    line-height: 1.1;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+
+    letter-spacing: 0;
+    text-transform: none;
+
+    color: var(--ink);
+
+    margin: 0 0 8px 0;
 }
 
 .hero-identity h1 {
-    font-size: clamp(3rem, 7vw, 5rem);
+    font-family: "Young Serif", -apple-system, sans-serif;
+    font-size: 53px;
     line-height: 0.95;
+    margin-top: 0.25rem;
+    color: var(--ink);
+    width: max-content;
+}
+
+.hero-identity h1 span {
+    font-family: "Young Serif", serif;
+    display: block;
+    font-size: inherit;
+    line-height: 0.92;
+    white-space: nowrap;
+    color: var(--ink);
+    margin: 0;
+}
+
+
+/* =========================
+   BIO
+   ========================= */
+
+.hero-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: -15px;
+    flex: 1;
+    min-height: 0;
 }
 
 .bio {
-    color: var(--text-muted);
-    max-width: 480px;
-    margin-bottom: 1.5rem;
+    color: var(--ink);
+
+    font-size: 17px;
+    line-height: 1.55;
+
+    margin-top: 0px;
 }
+
+
+/* =========================
+   META
+   ========================= */
 
 .meta-list {
     display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 80px;
+
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 .meta-row dt {
-    font-size: 0.75rem;
+    font-size: 14px;
+
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    margin-bottom: 0.15rem;
+    letter-spacing: 0;
+
+    color: var(--ink);
+
+    margin-bottom: 4px;
 }
 
 .meta-row dd {
+    font-size: 16px;
     font-weight: 600;
+
+    color: var(--ink);
 }
+
+
+/* =========================
+   SOCIAL BUTTONS
+   ========================= */
 
 .social-links {
     display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
+    gap: 15px;
 
-.social-link {
-    display: inline-block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    color: var(--paper);
-    background-color: var(--ink);
-    border-radius: var(--radius);
-    padding: 0.5rem 1.1rem;
-    transition: background-color 0.2s ease;
-}
-
-.social-link:hover {
-    background-color: var(--accent);
-}
-
-.hero-photo {
-    grid-area: photo;
-    align-self: center;
-    position: relative;
-}
-
-.photo-block {
-    position: absolute;
-    top: 1.25rem;
-    left: 1.25rem;
-    width: 100%;
-    height: 100%;
-    background-color: var(--accent);
-    border-radius: var(--radius);
-    z-index: 0;
-}
-
-.avatar {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 3px solid var(--ink);
-}
-
-/* footer & responsiveness */
-.site-footer {
-    padding: 1.5rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--line);
-}
-
-@media (max-width: 600px) {
-    .hero-grid {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "identity"
-            "photo"
-            "details";
-    }
-
-    .hero-photo {
-        max-width: 220px;
-    }
-
-    .social-links {
-        justify-content: flex-start;
-    }
+    margin-top: 0;
 }
