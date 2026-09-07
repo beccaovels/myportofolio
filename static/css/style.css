@@ -6,24 +6,21 @@
 }
 
 :root {
-    --ink: #1c1917;
-    --paper: #eaece1;
-    --accent: #6d3a52;
-    --accent-dark: #6d3a52;
-    --line: #e3d9c9;
-    --text-muted: #6b6459;
-    --radius: 4px;
+    --ink: #242238;
+    --paper: #f6f1e7;
+    --accent: #8fa56a;
+    --accent-secondary: #e8d66a;
 }
 
 body {
-    font-family: -apple-system, "Poppins", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Valley Sans', -apple-system, sans-serif;
     color: var(--ink);
     background-color: var(--paper);
     line-height: 1.6;
 }
 
 h1, .brand {
-    font-family: "Libre Baskerville", -apple-system, sans-serif;
+    font-family: "Young Serif", -apple-system, sans-serif;
 }
 
 .container {
