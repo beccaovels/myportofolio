@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 # Load enviroment variables from .env file
 load_dotenv()
 
+# add deployment here
 ALLOWED_HOSTS = ["localhost","127.0.0.1","rebecca-love-myportofolio.pws.cs.ui.ac.id"]
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
@@ -33,8 +34,6 @@ SECRET_KEY = 'django-insecure-%go9i2(b*9mg*t9f2^2si-hm8-lfs9$u=y!w)%0t$xj6%3llm&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -49,7 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMidlleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
