@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,56 +7,152 @@
     <title>Rebecca - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&family=Young+Serif&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <a href="#profile" class="brand">Rebecca</a>
-            <nav>
-                <a href="#profile">Profile</a>
-            </nav>
-        </div>
-    </header>
+    <div class="container navbar">
+        <a href="#profile" class="brand">
+            <img src="{% static 'img/rebecca-logo.svg' %}" alt="Rebecca Brand Logo">
+        </a>
+        
+        <nav class="nav-links">
+            <a href="#profile">Home</a>
+            <a href="#education">About</a>
+            <a href="https://drive.google.com/file/d/1gBuQAE2ehM_lLzzTVDjTS5feE92_fNeH/view?usp=sharing" class="btn btn-small btn-primary">
+                <span> View CV</span>
+                <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="arrow Logo" class="btn-icon arrow-icon">
+            </a>
+        </nav>
+    </div>
+</header>
 
-    <main>
-        <section class="hero" id="profile">
-            <div class="container hero-grid">
-                <div class="hero-identity">
-                    <p class="hero-kicker">Computer Science &middot; Universitas Indonesia</p>
-                    <h1>Rebecca Love Lianov Simanjuntak</h1>
-                </div>
-                <div class="hero-photo">
-                    <div class="photo-block"></div>
-                    <img class="avatar" src="/static/img/rebecca.jpeg" alt="Photo of Rebecca">
-                </div>
-                <div class="hero-details">
-                    <p class="bio">Hi, I'm Rebecca and I am deeply driven to create tech solutions for a better life. As an enthusiast in AI/ML, I'm eager to learn how this field can address complex issues ranging from cybersecurity to biomedical sciences, as I continue to collaborate, learn, and grow as a problem-solver.</p>
-                    <dl class="meta-list">
-                        <div class="meta-row">
-                            <dt>NPM</dt>
-                            <dd>2506637110</dd>
-                        </div>
-                        <div class="meta-row">
-                            <dt>Program</dt>
-                            <dd>S1 Ilmu Komputer KKI</dd>
-                        </div>
-                    </dl>
-                    <div class="social-links">
-                        <a href="https://github.com/beccaovels" class="social-link">GitHub</a>
-                        <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="social-link">LinkedIn</a>
-                        <a href="mailto:rebecca.love@ui.ac.id" class="social-link">Email</a>
+<!-- hero -->
+<section class="hero" id="profile">
+    <div class="container">
+        <div class="hero-card-box">i
+            <div class="hero-grid">
+                <figure class="hero-photo">
+                    <img src="{% static 'img/rebecca.jpeg' %}" alt="Photo of Rebecca">
+                </figure>
+
+                <div class="hero-content">
+                    <div class="hero-identity">
+                        <p class="hero-kicker">Hello! I'm</p>
+                        <h1>
+                            <span>Rebecca Love</span> 
+                            <span>Lianov Simanjuntak</span>
+                        </h1>
+                    </div>
+
+                    <div class="hero-details">
+                        <p class="bio">
+                            A deeply driven undergraduate student striving to create tech solutions for a better life. As an enthusiast in AI/ML, I'm eager to learn how this field can address complex issues ranging from cybersecurity to biomedical sciences, as I continue to collaborate, learn, and grow as a problem-solver.
+                        </p>
+
+                        <dl class="meta-list">
+                            <div class="meta-row">
+                                <dt>NPM</dt>
+                                <dd>2506637110</dd>
+                            </div>
+                            <div class="meta-row">
+                                <dt>PROGRAM</dt>
+                                <dd>Ilmu Komputer KKI</dd>
+                            </div>
+                        </dl>
+
+                        <nav class="social-links">
+                            <a href="mailto:rebecca.love@ui.ac.id" class="btn btn-small btn-primary">
+                                <span>Email</span>
+                                <img src="{% static 'img/Mail.svg' %}" alt="Email Icon" class="btn-icon">
+                            </a>
+                            <a href="https://github.com/beccaovels" class="btn btn-small btn-primary">
+                                <span>Github</span>
+                                <img src="{% static 'img/Github.svg' %}" alt="GitHub Logo" class="btn-icon">
+                            </a>
+                            <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="btn btn-small btn-primary">
+                                <span>LinkedIn</span>
+                                <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon arrow-icon">
+                            </a>
+                        </nav>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
+</section>
 
+<!-- education -->
+<section class="education" id="education">
+    <div class="container">
+
+        <header class="section-intro">
+        <img src="{% static 'img/education-fix.svg' %}" alt="Education" class="education-logo">            
+            <p class="section-desc">
+                Shaped by strong academic environments and leadership roles, the core of this path centers on
+                computer science. At the heart of this work is the realization that technology can innovate
+                scalable solutions for the greater good.
+            </p>
+        </header>
+
+        <div class="education-body">
+            <div class="education-grid">
+                <article class="edu-card">
+                    <!--
+                    <a href="#detail-ui" class="edu-card-link" aria-label="View Universitas Indonesia details">
+                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
+                    </a>-->
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Universitas Indonesia Fakultas Ilmu Komputer logo">
+                    </div>
+                    <h3>Universitas<br>Indonesia</h3>
+                    <p class="edu-date">2025 - Present</p>
+                    <p class="edu-text">
+                        Currently pursuing an undergraduate degree in the Computer Science International Program at Fasilkom Universitas Indonesia. The journey through Fasilkom UI has been a transformative path of mastering computational foundations, tackling rigorous projects, and collaborating with a driven tech community.
+                    </p>
+                </article>
+
+                <article class="edu-card">
+                    <!--
+                    <a href="#detail-smak" class="edu-card-link" aria-label="View SMAK PENABUR Gading Serpong details">
+                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
+                    </a> -->
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/penabur-logo.svg' %}" alt="BPK PENABUR school logo">
+                    </div>
+                    <h3>SMAK PENABUR<br>Gading Serpong</h3>
+                    <p class="edu-date">2022 - 2025</p>
+                    <p class="edu-text">
+                        Serving as Student Council President and Deputy Editor-in-Chief of the Yearbook Committee
+                        built a robust foundation in collaborative leadership and effective team management. Initiated a Tech-Focused Education program to help students build creative and logical thinking skills to navigate current technologies.
+                    </p>
+                </article>
+
+                <article class="edu-card">
+                    <!--
+                    <a href="#detail-smpk" class="edu-card-link" aria-label="View SMPK PENABUR Bintaro Jaya details">
+                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
+                    </a>-->
+                    <div class="edu-logo-box">
+                        <img src="{% static 'img/penabur-logo.svg' %}" alt="BPK PENABUR school logo">
+                    </div>
+                    <h3>SMPK PENABUR<br>Bintaro Jaya</h3>
+                    <p class="edu-date">2022 - 2025</p>
+                    <p class="edu-text">
+                        Early leadership roles as Student Council Secretary established a critical foundation in
+                        public speaking and organizational communication, directly boosting the confidence
+                        needed for future leadership & technical roles.
+                    </p>
+                </article>
+            </div>
+        </div>   
+    </div>
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Rebecca. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            <p>&copy; 2026 Burhan. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
     </footer>
+</section>
 </body>
 </html>
