@@ -80,6 +80,9 @@ body {
 
 /* Header */
 .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     padding: 1.5rem 0;
     background-color: transparent;
 }
@@ -95,6 +98,26 @@ body {
     background-color: var(--ink);
     border-radius: 44px;
     margin: 0 auto;
+    /*scrolled-color*/
+    background: rgba(36, 34, 56, 0.957); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.nav-background-pill {
+    position: absolute;
+    top: 1.5rem; 
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    max-width: 1062px;
+    width: 100%;
+    height: 72px;
+    background-color: var(--ink);
+    border-radius: 44px;
+    z-index: 999; 
 }
 
 .brand img {
@@ -448,6 +471,13 @@ body {
         padding: 1rem 0;
     }
 
+    .nav-background-pill {
+        top: 1rem;
+        width: calc(100% - 2rem);
+        height: 64px;
+        border-radius: 32px;
+    }
+
     .navbar {
         width: calc(100% - 2rem);
         height: 64px;
@@ -593,6 +623,10 @@ body {
     .navbar {
         width: calc(100% - 1.5rem);
         padding: 0 1rem;
+    }
+
+    .nav-background-pill {
+        width: calc(100% - 1.5rem);
     }
 
     .brand img {
