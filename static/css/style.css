@@ -13,6 +13,16 @@
     --accent-secondary: #e8d66a;
 }
 
+/*navbar's autoscrool*/
+html {
+    scroll-behavior: smooth;
+}
+
+#profile,
+#education {
+    scroll-margin-top: 100px; /* adjust to roughly your navbar's height + spacing */
+}
+
 body {
     font-family: 'Valley Sans', -apple-system, sans-serif;
     color: var(--ink);
@@ -418,7 +428,7 @@ body {
 /*footer*/
 .site-footer {
     padding: 1.5rem;
-    color: var(--text-muted);
+    color: var(--ink);
     font-size: 0.85rem;
     border-top: 1px solid var(--line);
 }
