@@ -498,18 +498,6 @@ body {
     cursor: pointer;
 }
 
-.expandable-content summary .expand-icon {
-    width: 0.7rem !important;
-    height: 0.7rem !important;
-    display: block; 
-}
-
-.expandable-content summary .close-icon {
-    width: 1.2rem;
-    height: 1.2rem;
-    display: none; 
-}
-
 .expandable-content summary::-webkit-details-marker {
     display: none;
 }
@@ -523,31 +511,13 @@ body {
     line-height: 0;
 }
 
-.expandable-content summary .edu-arrow-icon {
-    width: 1.2rem; 
-    height: 1.2rem;
-    object-fit: contain;
-}
-
-.expandable-content summary .close-icon {
-    display: none;
-}
-
-details[open] summary .expand-icon {
-    display: none !important;
-}
-
-details[open] summary .close-icon {
-    display: block !important;
-}
-
 .edu-expanded-glass {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(36, 34, 56, 0.99); 
+    background: rgba(36, 34, 56, 0.95); 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 20px; 
@@ -562,21 +532,6 @@ details[open] summary .close-icon {
 .edu-expanded-glass::-webkit-scrollbar { width: 4px; }
 .edu-expanded-glass::-webkit-scrollbar-track { background: transparent; }
 .edu-expanded-glass::-webkit-scrollbar-thumb { background: rgba(246, 241, 231, 0.3); border-radius: 2px; }
-
-/* 1. Hide your new close icon by default */
-.close-icon {
-    display: none;
-}
-
-/* 2. When the card opens, hide the default arrow */
-details[open] summary .expand-icon {
-    display: none;
-}
-
-/* 3. When the card opens, reveal your imported left arrow SVG */
-details[open] summary .close-icon {
-    display: block;
-}
 
 @keyframes slideDown {
     from { opacity: 0; }
