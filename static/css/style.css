@@ -348,10 +348,10 @@ body {
     -webkit-backdrop-filter: blur(16px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     transition: transform 0.2s ease, background 0.2s ease;
-
     display: flex;
     flex-direction: column;
-    height: 420px; /* fixed card height — adjust to your ideal size */
+    min-height: 420px; 
+    height: auto;
 }
 
 .edu-card:hover {
@@ -408,6 +408,54 @@ body {
     margin-bottom: 0.3rem;
 }
 
+
+.edu-detail-badge {
+    display: inline-block;
+    background-color: var(--accent);
+    color: var(--ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    align-self: flex-start;
+    margin-bottom: 1rem;
+}
+
+
+.edu-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.edu-activity-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.edu-activity-card h4 {
+    color: var(--paper);
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+}
+
+.edu-activity-org {
+    color: var(--accent-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.edu-activity-desc {
+    color: var(--paper);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
 .edu-date {
     color: var(--paper);
     font-size: 0.9rem;
@@ -419,10 +467,7 @@ body {
     color: var(--paper);
     font-size: 0.9rem;
     line-height: 1.55;
-    flex-grow: 1;
-    min-height: 0;      
-    overflow-y: auto;
-    padding-right: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .edu-text::-webkit-scrollbar {
@@ -446,6 +491,51 @@ body {
     display: none;
     height: 0;
     width: 0;
+}
+
+.expendable-content summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.expandable-content summary::-webkit-details-marker {
+    display: none;
+}
+
+.expandable-content summary.edu-card-link {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 30;
+    display: block;
+    line-height: 0;
+}
+
+.edu-expanded-glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(36, 34, 56, 0.95); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px; 
+    padding: 1.75rem;
+    padding-top: 3.5rem; 
+    box-sizing: border-box;
+    z-index: 20;
+    overflow-y: auto;
+    animation: fadeIn 0.25s ease-out forwards;
+}
+
+.edu-expanded-glass::-webkit-scrollbar { width: 4px; }
+.edu-expanded-glass::-webkit-scrollbar-track { background: transparent; }
+.edu-expanded-glass::-webkit-scrollbar-thumb { background: rgba(246, 241, 231, 0.3); border-radius: 2px; }
+
+@keyframes slideDown {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /*footer*/
