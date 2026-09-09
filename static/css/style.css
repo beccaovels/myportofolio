@@ -511,13 +511,33 @@ body {
     line-height: 0;
 }
 
+.expandable-content summary .expand-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    display: block; 
+}
+
+.expandable-content summary .close-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: none; 
+}
+
+details[open] summary .expand-icon {
+    display: none !important;
+}
+
+details[open] summary .close-icon {
+    display: block !important;
+}
+
 .edu-expanded-glass {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(36, 34, 56, 0.95); 
+    background: rgba(36, 34, 56, 0.98); 
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 20px; 
@@ -536,6 +556,61 @@ body {
 @keyframes slideDown {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+/*tutor2*/
+.experience-section {
+    padding: 4rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.section-kicker {
+    color: var(--accent-dark);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.experience-section h1 {
+    margin: 0.4rem 0 1.5rem;
+    font-size: 2rem;
+}
+
+.experience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.experience-card {
+    padding: 1.25rem;
+    background-color: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.experience-category {
+    color: var(--accent-dark);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.experience-card h2 {
+    margin: 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.experience-description,
+.empty-state {
+    color: var(--text-muted);
+}
+
+.experience-status {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 /*footer*/

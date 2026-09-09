@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience - {{ name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&family=Young+Serif&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+    <div class="container navbar">
+        <a href="{% url 'main:show_main' %}" class="brand">
+            <img src="{% static 'img/rebecca-logo.svg' %}" alt="{{ name }} Brand Logo">
+        </a>
+        
+        <nav class="nav-links">
+            <a href="{% url 'main:show_main' %}">Profile</a>
+            <a href="{% url 'main:show_experience' %}">Experience</a>
+            <a href="https://drive.google.com/file/d/1gBuQAE2ehM_lLzzTVDjTS5feE92_fNeH/view?usp=sharing" class="btn btn-small btn-primary">
+                <span> View CV</span>
+                <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="arrow Logo" class="btn-icon arrow-icon">
+            </a>
+        </nav>
+    </div>
+    </header>
+
+    <main>
+    <section class="education" id="experience">
+    <div class="container">
+        
+        <header class="section-intro">
+            <h2>Experience</h2>
+        </header>
+
+        <div class="education-body">
+            <div class="education-grid">
+                
+                {% for experience in experience_list %}
+                <article class="edu-card">
+                    <div class="edu-logo-box">
+                        {% if experience.thumbnail %}
+                            <img src="{{ experience.thumbnail }}" alt="{{ experience.title }} logo">
+                        {% else %}
+                            <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Default logo">
+                        {% endif %}
+                    </div>
+                    
+                    <h3>{{ experience.title }}</h3>
+                    
+                    <p class="edu-date">
+                        {{ experience.started_at|date:"Y" }} - 
+                        {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"Y" }}{% endif %}
+                    </p>
+                    
+                    <p class="edu-text">{{ experience.description }}</p>
+                    
+                    <details class="expandable-content">
+                        <summary class="edu-card-link" aria-label="Toggle details">
+                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
+                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
+                        </summary>
+                        
+                        <div class="edu-expanded-glass">
+                            <span class="edu-detail-badge">{{ experience.get_category_display }}</span>
+                            <div class="edu-activity-list">
+                                <article class="edu-activity-card">
+                                    <h4>Status</h4>
+                                    <p class="edu-activity-desc">
+                                        {% if experience.is_ongoing %}
+                                            Ongoing
+                                        {% else %}
+                                            Completed
+                                        {% endif %}
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                    </details>
+                </article>
+                
+                {% empty %}
+                <p style="color: var(--paper); text-align: center; width: 100%;">No experience has been added yet.</p>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+</section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+        </div>
+    </footer>
+</body>
+</html>
