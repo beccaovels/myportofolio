@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rebecca - Portfolio</title>
+    <title>{{name}} - Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&family=Young+Serif&display=swap" rel="stylesheet">
@@ -13,13 +13,13 @@
 <body>
     <header class="site-header">
     <div class="container navbar">
-        <a href="#profile" class="brand">
-            <img src="{% static 'img/rebecca-logo.svg' %}" alt="Rebecca Brand Logo">
+        <a href="{% url 'main:show_main' %}" class="brand">
+            <img src="{% static 'img/rebecca-logo.svg' %}" alt="{{ name }} Brand Logo">
         </a>
         
         <nav class="nav-links">
-            <a href="#profile">Home</a>
-            <a href="#about">About</a>
+            <a href="{% url 'main:show_main' %}">Profile</a>
+            <a href="{% url 'main:show_experience' %}">Experience</a>
             <a href="https://drive.google.com/file/d/1gBuQAE2ehM_lLzzTVDjTS5feE92_fNeH/view?usp=sharing" class="btn btn-small btn-primary">
                 <span> View CV</span>
                  <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="arrow Logo" class="btn-icon arrow-icon">
@@ -41,8 +41,8 @@
                     <div class="hero-identity">
                         <p class="hero-kicker">Hello! I'm</p>
                         <h1>
-                            <span>Rebecca Love</span> 
-                            <span>Lianov Simanjuntak</span>
+                            <span>{{ hero_name1 }}</span>
+                            <span>{{ hero_name2 }}</span>
                         </h1>
                     </div>
 
@@ -54,11 +54,11 @@
                         <dl class="meta-list">
                             <div class="meta-row">
                                 <dt>NPM</dt>
-                                <dd>2506637110</dd>
+                                <dd>{{ npm }}</dd>
                             </div>
                             <div class="meta-row">
                                 <dt>PROGRAM</dt>
-                                <dd>Ilmu Komputer KKI</dd>
+                                <dd>{{ study_program }}</dd>
                             </div>
                         </dl>
 
@@ -208,7 +208,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Rebecca. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            <p>&copy; 2026 {{name}}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
     </footer>
 </body>
