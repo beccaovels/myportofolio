@@ -98,11 +98,8 @@
 
         <div class="education-body">
             <div class="education-grid">
+                <!--universitas indonesia-->
                 <article class="edu-card">
-                    <!--
-                    <a href="#detail-ui" class="edu-card-link" aria-label="View Universitas Indonesia details">
-                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
-                    </a>-->
                     <div class="edu-logo-box">
                         <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Universitas Indonesia Fakultas Ilmu Komputer logo">
                     </div>
@@ -111,42 +108,100 @@
                     <p class="edu-text">
                         Currently pursuing an undergraduate degree in the Computer Science International Program at Fasilkom Universitas Indonesia. The journey through Fasilkom UI has been a transformative path of mastering computational foundations, tackling rigorous projects, and collaborating with a driven tech community.
                     </p>
+                    <details class="expandable-content">
+                        <summary class="edu-card-link" aria-label="Toggle details">
+                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
+                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
+                        </summary>
+                        
+                        <div class="edu-expanded-glass">
+                            <span class="edu-detail-badge">Activities &amp; Experience</span>
+                            <div class="edu-activity-list">
+                                <article class="edu-activity-card">
+                                    <h4>FrontEnd Developer Staff</h4>
+                                    <p class="edu-activity-org">DDP0 2026</p>
+                                    <p class="edu-activity-desc">
+                                        Developed and maintained the frontend architecture for DDP0, a technical event introducing new students to Python programming. Utilizing React Router, TypeScript, and Tailwind CSS, the platform was designed to provide an intuitive, user-friendly experience for accessing practice modules and managing coding submissions.
+                                    </p>
+                                </article>
+                                <article class="edu-activity-card">
+                                    <h4>Technical Staff of AI Innovation Competition</h4>
+                                    <p class="edu-activity-org">Compfest 18</p>
+                                    <p class="edu-activity-desc">
+                                        Oversees codebase integrity through GitHub reviews, ensuring system architectures remain streamlined and efficient without overbuilding. Establishes technical boundaries and designs evaluation frameworks to keep the competition's grading rubric clear and objective.
+                                    </p>
+                                </article>
+                                <article class="edu-activity-card">
+                                    <h4>Data Science & Artificial Intelligence SIG Open Class Member</h4>
+                                    <p class="edu-activity-org">Open Class RISTEK 2025</p>
+                                    <p class="edu-activity-desc">
+                                        Explored the fundamentals of Data Science and Artificial Intelligence, diving deep into machine learning mathematics, core algorithms, model inference, and hands-on Kaggle workflows to build a strong foundation in the field.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                    </details>
                 </article>
-
+                <!--smak penabur gading serpong-->
                 <article class="edu-card">
-                    <!--
-                    <a href="#detail-smak" class="edu-card-link" aria-label="View SMAK PENABUR Gading Serpong details">
-                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
-                    </a> -->
                     <div class="edu-logo-box">
                         <img src="{% static 'img/penabur-logo.svg' %}" alt="BPK PENABUR school logo">
                     </div>
                     <h3>SMAK PENABUR<br>Gading Serpong</h3>
                     <p class="edu-date">2022 - 2025</p>
                     <p class="edu-text">
-                        Serving as Student Council President and Deputy Editor-in-Chief of the Yearbook Committee
-                        built a robust foundation in collaborative leadership and effective team management. Initiated a Tech-Focused Education program to help students build creative and logical thinking skills to navigate current technologies.
+                        Serving as Student Council President and Deputy Editor-in-Chief of the Yearbook Committee built a robust foundation in collaborative leadership and effective team management. Initiated a Tech-Focused Education program to help students build creative and logical thinking skills to navigate current technologies.
                     </p>
+                    <details class="expandable-content">
+                        <summary class="edu-card-link" aria-label="Toggle details">
+                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
+                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
+                        </summary>
+                        <div class="edu-expanded-glass">
+                            <span class="edu-detail-badge">Activities &amp; Experience</span>
+                            <div class="edu-activity-list">
+                                <article class="edu-activity-card">
+                                    <h4>Student Council President</h4>
+                                    <p class="edu-activity-org">SMAK PENABUR Gading Serpong's 2024-2025 Student Council</p>
+                                    <p class="edu-activity-desc">
+                                        Spearheaded student governance and cross-functional team management to execute large-scale school initiatives. Championed technical education by conceptualizing a full-day computational thinking competition for over 300 students, empowering them to confidently navigate and innovate within the digital landscape.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                    </details>
                 </article>
-
+                <!--smpk penabur gading serpong-->
                 <article class="edu-card">
-                    <!--
-                    <a href="#detail-smpk" class="edu-card-link" aria-label="View SMPK PENABUR Bintaro Jaya details">
-                        <img src="{% static 'img/green-arrow.svg' %}" alt="" class="edu-arrow-icon">
-                    </a>-->
                     <div class="edu-logo-box">
                         <img src="{% static 'img/penabur-logo.svg' %}" alt="BPK PENABUR school logo">
                     </div>
                     <h3>SMPK PENABUR<br>Bintaro Jaya</h3>
                     <p class="edu-date">2022 - 2025</p>
                     <p class="edu-text">
-                        Early leadership roles as Student Council Secretary established a critical foundation in
-                        public speaking and organizational communication, directly boosting the confidence
-                        needed for future leadership & technical roles.
+                        Early leadership roles as Student Council Secretary established a critical foundation in public speaking and organizational communication, directly boosting the confidence needed for future leadership & technical roles.
                     </p>
+                    <details class="expandable-content">
+                        <summary class="edu-card-link" aria-label="Toggle details">
+                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
+                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
+                        </summary>
+                        <div class="edu-expanded-glass">
+                            <span class="edu-detail-badge">Activities &amp; Experience</span>
+                            <div class="edu-activity-list">
+                                <article class="edu-activity-card">
+                                    <h4>The Duke of International Award Participant</h4>
+                                    <p class="edu-activity-org">Bronze Level</p>
+                                    <p class="edu-activity-desc">
+                                        Earned this internationally recognized award through a sustained, long-term commitment to community service, physical fitness, and personal skill development. Engaging in this rigorous framework required immense discipline and time management to balance consistent voluntary service with practical, hands-on skills building. The entire experience culminated in successfully navigating a challenging outdoor expedition, serving as a critical test of endurance and real-time adaptability in unpredictable environments. Ultimately, completing this program built robust teamwork and problem-solving skills, laying a resilient foundation for tackling complex collaborative projects in both academic and organizational spheres.
+                                    </p>
+                                </article>
+                            </div>
+                        </div>
+                    </details>
                 </article>
             </div>
-        </div>   
+        </div>
     </div>
 </section>
 
