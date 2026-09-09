@@ -511,6 +511,26 @@ body {
     line-height: 0;
 }
 
+.expandable-content summary .expand-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    display: block; 
+}
+
+.expandable-content summary .close-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: none; 
+}
+
+details[open] summary .expand-icon {
+    display: none !important;
+}
+
+details[open] summary .close-icon {
+    display: block !important;
+}
+
 .edu-expanded-glass {
     position: absolute;
     top: 0;
