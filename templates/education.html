@@ -29,68 +29,52 @@
     </header>
 
     <main>
-    <section class="education" id="education">
-    <div class="container">
+<div class="page-title-wrap">
+    <h2 class="page-title">Education</h2>
+</div>
 
-        <header class="section-intro">
-            <h2>Education</h2>
-        </header>
+<section class="education education--page" id="education">
+<div class="container">
 
-        <div class="education-body">
-            <div class="education-grid">
+    <div class="education-body">
+        <div class="education-grid">
 
-                {% for education in education_list %}
-                <article class="edu-card">
-                    <div class="edu-logo-box">
-                        {% if education.logo %}
-                            <img src="{{ education.logo }}" alt="{{ education.institution }} logo">
-                        {% else %}
-                            <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Default logo">
-                        {% endif %}
-                    </div>
+            {% for education in education_list %}
+            <article class="edu-card">
+                <!-- Level pill replaces the old expand-arrow summary -->
+                <span class="edu-status-pill">{{ education.get_level_display }}</span>
 
-                    <h3>{{ education.institution }}</h3>
-
-                    {% if education.program %}
-                        <p class="edu-program">{{ education.program }}</p>
+                <div class="edu-logo-box">
+                    {% if education.logo %}
+                        <img src="{{ education.logo }}" alt="{{ education.institution }} logo">
+                    {% else %}
+                        <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Default logo">
                     {% endif %}
+                </div>
 
-                    <p class="edu-date">
-                        {{ education.started_at|date:"Y" }} -
-                        {% if education.is_ongoing %}Present{% else %}{{ education.ended_at|date:"Y" }}{% endif %}
-                    </p>
+                <h3>{{ education.institution }}</h3>
 
-                    <p class="edu-text">{{ education.description }}</p>
+                {% if education.program %}
+                    <p class="edu-program">{{ education.program }}</p>
+                {% endif %}
 
-                    <details class="expandable-content">
-                        <summary class="edu-card-link" aria-label="Toggle details">
-                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
-                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
-                        </summary>
+                <p class="edu-date">
+                    {{ education.started_at|date:"Y" }} -
+                    {% if education.is_ongoing %}Present{% else %}{{ education.ended_at|date:"Y" }}{% endif %}
+                </p>
 
-                        <div class="edu-expanded-glass">
-                            <span class="edu-detail-badge">{{ education.get_level_display }}</span>
-                            <div class="edu-activity-list">
-                                <article class="edu-activity-card">
-                                    <h4>Status</h4>
-                                    <p class="edu-activity-desc">
-                                        {% if education.is_ongoing %}Ongoing{% else %}Completed{% endif %}
-                                    </p>
-                                </article>
-                            </div>
-                        </div>
-                    </details>
-                </article>
+                <p class="edu-text">{{ education.description }}</p>
+            </article>
 
-                {% empty %}
-                <p style="color: var(--paper); text-align: center; width: 100%;">No education records have been added yet.</p>
-                {% endfor %}
+            {% empty %}
+            <p style="color: var(--paper); text-align: center; width: 100%;">No education records have been added yet.</p>
+            {% endfor %}
 
-            </div>
         </div>
     </div>
-    </section>
-    </main>
+</div>
+</section>
+</main>
 
     <footer class="site-footer">
         <div class="container">

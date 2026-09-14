@@ -299,7 +299,7 @@ body {
     background-color: var(--ink);
     border-radius: 32px;
     padding: 3.5rem 3rem;
-    margin: 3rem auto;
+    margin: 0 auto 3rem;
     max-width: 1062px;
 }
 
@@ -352,6 +352,13 @@ body {
     flex-direction: column;
     min-height: 420px; 
     height: auto;
+}
+
+.edu-program {
+    color: var(--accent-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
 }
 
 .edu-card:hover {
@@ -421,6 +428,50 @@ body {
     margin-bottom: 1rem;
 }
 
+/* Status/level pill on Education cards — replaces the old expand arrow */
+.edu-status-pill {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: inline-block;
+    background-color: var(--accent);
+    color: var(--ink);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.3rem 0.85rem;
+    border-radius: 50px;
+    z-index: 2;
+}
+
+/* Section header now lives outside the dark card, on the page background */
+.page-title {
+    font-family: "Young Serif", serif;
+    color: var(--ink);
+    font-size: 2rem;
+    margin: 0;
+}
+
+.page-title-wrap {
+    max-width: 960px;
+    margin: 2rem auto 0.75rem;
+    padding: 5 1rem;
+}
+
+.education--page .edu-detail-badge {
+    background-color: var(--accent-secondary);
+}
+
+.education--page .edu-card {
+    padding: 2rem 1.75rem;
+}
+
+.education--page .edu-logo-box {
+    margin-top: 3.5rem;
+}
+
+.education--page .education-grid {
+    gap: 2rem;
+}
 
 .edu-activity-list {
     display: flex;
