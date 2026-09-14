@@ -30,22 +30,22 @@ This repository will be utilized to document and update my personal project over
 
 
 
-### Assignment 1
-## Outline
+## Assignment 1
+### Outline
 A single-page "About Me" portfolio built with plain HTML5 and CSS3 (Django template syntax used only for static file loading). The page includes:
  
 - **Hero/Profile section** — name, NPM, program, photo, bio, and social links (Email, GitHub, LinkedIn)
 - **Education section** — a responsive 3-card grid showcasing academic background, each card featuring a school logo, name, date range, and description, with a scrollable text area for longer descriptions
 
-## Reflective Questions
+### Reflective Questions
 1. Yes, I used semantic HTML5 elements throughout the page — `<header>`, `<nav>`, `<section>` (for the hero/profile and education sections), `<article>` (for each individual education card), `<figure>` (for the profile photo), and `<dl>`/`<dt>`/`<dd>` for the NPM/program metadata. Using `<section>` and `<article>` made the structure self-documenting: anyone reading the HTML can immediately tell that the education block is a distinct region of content, and that each school entry inside it is an independent, repeatable unit — which also made the CSS easier to write, since I could scope styles to `.education .edu-card` instead of relying on generic `<div>` classes with no inherent meaning. It also improves accessibility, since screen readers and browsers can use these landmarks for navigation.
 2. One challenge was keeping the three education cards visually consistent as content length varied — different school names wrapped to different numbers of lines, which pushed the date and description text to different vertical positions across cards. I solved this with a Flexbox column layout (`display: flex; flex-direction: column`) combined with `align-items: stretch` on the grid, plus explicit `<br>` tags to control exactly how each title wraps, so all three cards share the same internal rhythm regardless of viewport width. Another challenge was the navbar: at smaller widths there wasn't enough horizontal room for the logo, the Home and About links, and the "View CV" button without everything cramming together or wrapping awkwardly. I evaluated each nav item by how essential it was versus how much space it demanded — the Home and About links pointed to sections already reachable by scrolling on a single-page site, so on mobile I prioritized keeping the brand logo and the CV button (a primary call-to-action) visible and hid the Home/About links below 480px rather than shrinking everything until it became unreadable. In general, my approach to reprioritizing elements for mobile was to ask which elements were purely navigational convenience versus which were core content or primary actions, and sacrifice the former first when space ran out.
 3. Because the site is purely static, it can't store or update actual data — every project, skill, or education entry I want to add or edit requires directly modifying the HTML and pushing a new deploy, which doesn't scale well and isn't practical for content that needs to change often (e.g. a real-time list of projects, or a visitor message form). It also means there's no way to track engagement, receive messages directly through the site, or personalize content per visitor. In the next iteration, I'd most want to add a database-backed CMS layer (using Django's MVT architecture, which the tutorial hints is coming next) so I could manage portfolio content through an admin panel instead of hardcoding it, and add a working contact form that stores submissions rather than just triggering a `mailto:` link.
-## AI Disclosure
+### AI Disclosure
  
 AI tools were used to assist with this assignment. Full transparency below:
  
-**Tools used:** Claude (Anthropic) and ChatGPT (OpenAI)
+**Tools used:** Claude Sonnet 5 - Medium (Anthropic) and ChatGPT (OpenAI)
  
 **What each tool was used for:**
  
@@ -56,3 +56,96 @@ AI tools were used to assist with this assignment. Full transparency below:
 **What I changed or fixed manually:** The decision to hide the Home/About nav links on mobile (rather than shrinking them further or stacking the navbar) was my own trade-off call, based on prioritizing the primary CV call-to-action over secondary same-page navigation. [Fill in any other manual edits — e.g. adjusting specific spacing/padding values to match your exact visual taste, writing your own bio and content copy, choosing your own color palette, any bugs the AI suggestions didn't fully resolve that you fixed yourself.]
  
 **Critical reflection on AI limitations:** AI-suggested CSS occasionally required correction — for example, an initial scrollbar-hiding suggestion didn't fully suppress the native browser scroll buttons until `::-webkit-scrollbar-button { display: none }` was added explicitly, which wasn't included the first time. Suggested numeric values (like fixed card heights or breakpoint paddings) were also starting estimates that needed manual tuning to fit my actual content rather than being used as-is. This highlighted that AI is most useful for explaining *why* a CSS/layout bug occurs and proposing a structurally sound approach, but the specific values and final visual polish still required my own judgment and iteration.
+
+## Assignment 2
+### Reflective Questions
+1. When a user opens the Education page, the browser sends a GET request to
+   `/education/`. Django's project-level `urls.py` (in the `myportofolio`
+   package) receives the request first and matches the path against its
+   `urlpatterns`, which includes `main.urls` via `include()`. The request is
+   then handed to the app-level `main/urls.py`, where the path `"education/"`
+   is matched to the `show_education` view via `name="show_education"`. The
+   `show_education` view function runs: it queries the `Education` model
+   with `Education.objects.all()`, retrieving every row from the database
+   as a QuerySet, and places that QuerySet into a context dictionary along
+   with static values like the page owner's name. The view then calls
+   `render(request, "education.html", context)`, which loads the
+   `education.html` template and passes it the context. Django's template
+   engine evaluates the `{% for education in education_list %}` loop,
+   rendering one `<article class="edu-card">` block per Education object
+   (or the `{% empty %}` fallback message if the QuerySet is empty), and
+   produces a final HTML string. This HTML is wrapped in an `HttpResponse`
+   and sent back through the same chain to the browser, which parses and
+   displays it.
+
+2. Storing the data in a model instead of hardcoding it in the template
+   keeps content and presentation separate. With a model, education
+   history lives in the database as structured, typed data (CharField,
+   DateField, etc.) with built-in validation, and can be created, updated,
+   or removed through the Django admin or shell without touching any HTML.
+   If the data were hardcoded, every new entry or edit would require
+   modifying the template directly, risking broken markup and making the
+   history hard to track in version control. Using a model also means the
+   same data can be reused across multiple templates or exposed later
+   through an API without duplication, and it scales cleanly — adding a
+   filter, sort order, or search feature only requires changing the view's
+   query, not rewriting HTML.
+
+3. `makemigrations` inspects the current state of the models and generates
+   migration files describing the schema changes needed to match them
+   (e.g., new fields, altered types, new models) — it does not touch the
+   actual database. `migrate` then applies those generated migration files
+   to the real database, executing the SQL needed to bring its schema in
+   line with the models. For example, adding a new `gpa = models.FloatField()`
+   field to the `Education` model requires running `makemigrations` first
+   to generate a migration file recording that a `gpa` column needs to be
+   added, and then `migrate` to actually alter the `education` table in
+   the database and add that column.
+
+### AI Disclosure
+**Tool used:** Claude Sonnet 5 - Medium (Anthropic)
+
+**What it was used for:**
+- Drafting the unit test suite (`EducationTest`) for the new Education page,
+  covering the three required scenarios: URL/template accessibility, data
+  rendering when non-empty, and the empty-state message.
+- Structuring the reflective questions above based on my own project code
+  (models.py, views.py, urls.py, education.html).
+
+**Prompting strategy:**
+I did not ask for a full solution upfront. I first uploaded the assignment
+context and asked what files Claude would need to write accurate tests,
+then supplied `models.py`, `views.py`, `urls.py`, `tests.py`, and
+`education.html` so the generated tests matched my actual field names,
+URL names, and template structure rather than generic placeholders. I ran
+the generated tests myself locally after each suggestion rather than
+assuming they were correct.
+
+**Where AI output was wrong and had to be corrected:**
+The first version of `test_empty_education_page_shows_empty_message`
+included `self.assertNotContains(response, "Universitas Indonesia")` to
+confirm no education record rendered. When I ran it, the test failed —
+not because my Django code was broken, but because the site footer
+("Fakultas Ilmu Komputer, Universitas Indonesia.") legitimately contains
+that same string on every page, empty or not. I pasted the failing
+traceback back to Claude, and rather than accepting a fix that changed
+my production template just to make the test pass, I pushed back and
+asked what the "best case" fix was. Claude's follow-up explained that the
+test assertion — not the app — was too broad, and that changing static
+site content to accommodate a test would be backwards. The fix was to
+assert against `self.education.program` (a value unique to a rendered
+education card, e.g. "S1 Ilmu Komputer KKI") instead of a substring that
+collides with unrelated static footer text. This is the version I kept.
+
+**What I verified myself:**
+- Ran `python manage.py test` after every change and confirmed `OK` with
+  9/9 tests passing before accepting any test code.
+- Manually checked that the empty-state string returned by the assertion
+  (`"No education records have been added yet."`) matches the exact text
+  in `education.html`, since a mismatch would cause a false failure.
+- Wrote the three reflective-question answers myself in my own words based
+  on tracing the actual request flow through my `urls.py`/`views.py`, using
+  Claude's draft only as a structural starting point.
+
+**Prompting/chat log:**
+Full conversation log available at: https://claude.ai/share/c8908741-3948-4e1d-a41e-3e2f127c3f7a
