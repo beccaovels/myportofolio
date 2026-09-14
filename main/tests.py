@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from main.models import Experience
+from main.models import Experience, Education
 
 
 class MainTest(TestCase):
@@ -56,3 +56,41 @@ class MainTest(TestCase):
         self.assertFalse(self.experience.is_ongoing)
         self.assertContains(response, "Completed")
         self.assertNotContains(response, "Ongoing")
+
+
+class EducationTest(TestCase):
+    def setUp(self):
+        self.education = Education.objects.create(
+            institution="Universitas Indonesia",
+            program="S1 Ilmu Komputer KKI",
+            level="university",
+            description="Studying computer science with a focus on AI/ML.",
+            started_at="2023-08-01",
+        )
+
+    def test_education_url_is_accessible_and_uses_correct_template(self):
+        """Scenario 1: The URL is accessible and uses the correct template."""
+        response = self.client.get(reverse("main:show_education"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "education.html")
+
+    def test_education_data_appears_when_not_empty(self):
+        """Scenario 2: Model data appears in the returned HTML response
+        when the data is not empty."""
+        response = self.client.get(reverse("main:show_education"))
+
+        self.assertContains(response, self.education.institution)
+        self.assertContains(response, self.education.program)
+        self.assertContains(response, self.education.description)
+        self.assertContains(response, "University")
+        self.assertContains(response, "Present")
+
+    def test_empty_education_page_shows_empty_message(self):
+        """Scenario 3: An empty message appears in the returned HTML
+        response when the data is empty."""
+        Education.objects.all().delete()
+        response = self.client.get(reverse("main:show_education"))
+
+        self.assertContains(response, "No education records have been added yet.")
+        self.assertNotContains(response, self.education.program)
