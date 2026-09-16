@@ -17,14 +17,6 @@
                 
                 {% for experience in experience_list %}
                 <article class="edu-card">
-                    <div class="edu-logo-box">
-                        {% if experience.thumbnail %}
-                            <img src="{{ experience.thumbnail }}" alt="{{ experience.title }} logo">
-                        {% else %}
-                            <img src="{% static 'img/fasilkom-ui-logo.svg' %}" alt="Default logo">
-                        {% endif %}
-                    </div>
-                    
                     <h3>{{ experience.title }}</h3>
                     
                     <p class="edu-date">

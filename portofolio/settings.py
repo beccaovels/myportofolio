@@ -155,3 +155,7 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# IMPLEMENTING THE FORM w/ CSRF TOKEN
+# use https:// to trail the URL
+CSRF_TRUSTED_ORIGINS = ["https://rebecca-love-myportofolio.pws.cs.ui.ac.id/"]
