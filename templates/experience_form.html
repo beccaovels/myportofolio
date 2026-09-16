@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block meta %}
+  <title>Add Experience - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+<main>
+  <section class="experience-form-section">
+    <div class="container">
+      <div class="experience-card experience-card--form">
+        <form method="post" action="{% url 'main:create_experience' %}">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+            {{ form.title }}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.employer.id_for_label }}">{{ form.employer.label }}</label>
+            {{ form.employer }}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="{{ form.started_at.id_for_label }}">{{ form.started_at.label }}</label>
+              {{ form.started_at }}
+            </div>
+            <div class="form-group">
+              <label for="{{ form.ended_at.id_for_label }}">{{ form.ended_at.label }}</label>
+              {{ form.ended_at }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>{{ form.category.label }}</label>
+            <div class="btn-group">
+              {% for radio in form.category %}
+                <label class="btn-choice">
+                  {{ radio.tag }}
+                  <span>{{ radio.choice_label }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+            {{ form.description }}
+          </div>
+
+          {% for field in form %}
+            {% for error in field.errors %}
+              <p class="form-error">{{ field.label }}: {{ error }}</p>
+            {% endfor %}
+          {% endfor %}
+
+          <div class="experience-card-actions">
+            <button type="submit" class="button">Add Experience</button>
+            <a href="{% url 'main:show_experience' %}" class="button button-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+{% endblock content %}
