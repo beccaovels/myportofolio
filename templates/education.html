@@ -2,6 +2,10 @@
 {% extends 'base.html' %} 
 {% load static %}
 
+{% block meta %}
+    <title>Education - {{ name }}</title>
+{% endblock meta %}
+
 <!-- indicates this block will extend the base template -->
 {% block content %}
 <main>

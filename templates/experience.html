@@ -1,62 +1,72 @@
-<!-- django template tags -->
-{% extends 'base.html' %} 
+{% extends "base.html" %}
 {% load static %}
 
-<!-- indicates this block will extend the base template -->
+{% block meta %}
+    <title>Experience - {{ name }}</title>
+{% endblock meta %}
+
 {% block content %}
-<main>
-    <div class="page-title-wrap">
-        <h2 class="page-title">Experience</h2>
-    </div>
+    <main>
+        <section class="experience-section" id="experience">
+            <div class="container">
+                <p class="section-kicker">The journey I've been through</p>
+                <div class="experience-header">
+                    <h1>Experience</h1>
+                    <a href="{% url 'main:create_experience' %}"
+                       class="button experience-add-button">
+                        <span aria-hidden="true">+</span>
+                        Add Experience
+                    </a>
+                </div>
+                <form method="get"
+                      action="{% url 'main:show_experience' %}"
+                      class="experience-search">
+                    <input type="search"
+                           name="title"
+                           value="{{ title_query }}"
+                           placeholder="Search by experience title"
+                           class="experience-search__input"
+                           aria-label="Search by experience title">
+                    <button type="submit" class="button">Search</button>
+                </form>
+                <div class="experience-grid">
+                    {% for experience in experience_list %}
+                        <article class="experience-card edu-card">
+                            <h2>{{ experience.title }}</h2>
+                            <span class="experience-category">{{ experience.get_category_display }}</span>
+                            <p class="edu-date">
+                                {{ experience.started_at|date:"Y" }} -
+                                {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"Y" }}{% endif %}
+                            </p>
+                            <p class="experience-description">{{ experience.description }}</p>
 
-    <section class="education" id="experience">
-    <div class="container">
+                            <details class="expandable-content">
+                                <summary class="edu-card-link" aria-label="Toggle details">
+                                    <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
+                                    <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
+                                </summary>
+                                <div class="edu-expanded-glass">
+                                    <span class="edu-detail-badge">
+                                        {% if experience.is_ongoing %}Ongoing{% else %}Completed{% endif %}
+                                    </span>
+                                </div>
+                            </details>
 
-        <div class="education-body">
-            <div class="education-grid">
-                
-                {% for experience in experience_list %}
-                <article class="edu-card">
-                    <h3>{{ experience.title }}</h3>
-                    
-                    <p class="edu-date">
-                        {{ experience.started_at|date:"Y" }} - 
-                        {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"Y" }}{% endif %}
-                    </p>
-                    
-                    <p class="edu-text">{{ experience.description }}</p>
-                    
-                    <details class="expandable-content">
-                        <summary class="edu-card-link" aria-label="Toggle details">
-                            <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
-                            <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
-                        </summary>
-                        
-                        <div class="edu-expanded-glass">
-                            <span class="edu-detail-badge">{{ experience.get_category_display }}</span>
-                            <div class="edu-activity-list">
-                                <article class="edu-activity-card">
-                                    <h4>Status</h4>
-                                    <p class="edu-activity-desc">
-                                        {% if experience.is_ongoing %}
-                                            Ongoing
-                                        {% else %}
-                                            Completed
-                                        {% endif %}
-                                    </p>
-                                </article>
+                            <div class="experience-card-actions">
+                                <div class="experience-actions">
+                                    {% include "components/experience_delete_modal.html" with experience=experience %}
+                                </div>
                             </div>
-                        </div>
-                    </details>
-                </article>
-                
-                {% empty %}
-                <p style="color: var(--paper); text-align: center; width: 100%;">No experience has been added yet.</p>
-                {% endfor %}
-                
+                        </article>
+                    {% empty %}
+                        {% if title_query %}
+                            <p class="empty-state">No experience found with that title.</p>
+                        {% else %}
+                            <p class="empty-state">No experience has been added yet.</p>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-        </div>
-    </section>
-</main>
+        </section>
+    </main>
 {% endblock content %}
