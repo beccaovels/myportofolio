@@ -1,93 +1,62 @@
+<!-- django template tags -->
+{% extends 'base.html' %} 
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{name}} - Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Valley+Sans:ital,wght@0,100..900;1,100..900&family=Young+Serif&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <header class="site-header">
-    <div class="container navbar">
-        <a href="{% url 'main:show_main' %}" class="brand">
-            <img src="{% static 'img/rebecca-logo.svg' %}" alt="{{ name }} Brand Logo">
-        </a>
-        
-        <nav class="nav-links">
-            <a href="{% url 'main:show_main' %}">Profile</a>
-            <a href="{% url 'main:show_education' %}">Education</a>
-            <a href="{% url 'main:show_experience' %}">Experience</a>
-            <a href="https://drive.google.com/file/d/1gBuQAE2ehM_lLzzTVDjTS5feE92_fNeH/view?usp=sharing" class="btn btn-small btn-primary">
-                <span> View CV</span>
-                 <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="arrow Logo" class="btn-icon arrow-icon">
-            </a>
-        </nav>
-    </div>
-</header>
 
-<!-- hero -->
-<section class="hero" id="profile">
-    <div class="container">
-        <div class="hero-card-box">
-            <div class="hero-grid">
-                <figure class="hero-photo">
-                    <img src="{% static 'img/rebecca.jpeg' %}" alt="Photo of Rebecca">
-                </figure>
+<!-- indicates this block will extend the base template -->
+{% block content %}
+<main>
+    <section class="hero" id="profile">
+        <div class="container">
+            <div class="hero-card-box">
+                <div class="hero-grid">
+                    <figure class="hero-photo">
+                        <img src="{% static 'img/rebecca.jpeg' %}" alt="Photo of Rebecca">
+                    </figure>
 
-                <div class="hero-content">
-                    <div class="hero-identity">
-                        <p class="hero-kicker">Hello! I'm</p>
-                        <h1>
-                            <span>{{ hero_name1 }}</span>
-                            <span>{{ hero_name2 }}</span>
-                        </h1>
-                    </div>
+                    <div class="hero-content">
+                        <div class="hero-identity">
+                            <p class="hero-kicker">Hello! I'm</p>
+                            <h1>
+                                <span>{{ hero_name1 }}</span>
+                                <span>{{ hero_name2 }}</span>
+                            </h1>
+                        </div>
 
-                    <div class="hero-details">
-                        <p class="bio">
-                            A deeply driven undergraduate student striving to create tech solutions for a better life. As an enthusiast in AI/ML, I'm eager to learn how this field can address complex issues ranging from cybersecurity to biomedical sciences, as I continue to collaborate, learn, and grow as a problem-solver.
-                        </p>
+                        <div class="hero-details">
+                            <p class="bio">
+                                A deeply driven undergraduate student striving to create tech solutions for a better life. As an enthusiast in AI/ML, I'm eager to learn how this field can address complex issues ranging from cybersecurity to biomedical sciences, as I continue to collaborate, learn, and grow as a problem-solver.
+                            </p>
 
-                        <dl class="meta-list">
-                            <div class="meta-row">
-                                <dt>NPM</dt>
-                                <dd>{{ npm }}</dd>
-                            </div>
-                            <div class="meta-row">
-                                <dt>PROGRAM</dt>
-                                <dd>{{ study_program }}</dd>
-                            </div>
-                        </dl>
+                            <dl class="meta-list">
+                                <div class="meta-row">
+                                    <dt>NPM</dt>
+                                    <dd>{{ npm }}</dd>
+                                </div>
+                                <div class="meta-row">
+                                    <dt>PROGRAM</dt>
+                                    <dd>{{ study_program }}</dd>
+                                </div>
+                            </dl>
 
-                        <nav class="social-links">
-                            <a href="mailto:rebecca.love@ui.ac.id" class="btn btn-small btn-primary">
-                                <span>Email</span>
-                                <img src="{% static 'img/Mail.svg' %}" alt="Email Icon" class="btn-icon">
-                            </a>
-                            <a href="https://github.com/beccaovels" class="btn btn-small btn-primary">
-                                <span>Github</span>
-                                <img src="{% static 'img/Github.svg' %}" alt="GitHub Logo" class="btn-icon">
-                            </a>
-                            <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="btn btn-small btn-primary">
-                                <span>LinkedIn</span>
-                                <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon arrow-icon">
-                            </a>
-                        </nav>
+                            <nav class="social-links">
+                                <a href="mailto:rebecca.love@ui.ac.id" class="btn btn-small btn-primary">
+                                    <span>Email</span>
+                                    <img src="{% static 'img/Mail.svg' %}" alt="Email Icon" class="btn-icon">
+                                </a>
+                                <a href="https://github.com/beccaovels" class="btn btn-small btn-primary">
+                                    <span>Github</span>
+                                    <img src="{% static 'img/Github.svg' %}" alt="GitHub Logo" class="btn-icon">
+                                </a>
+                                <a href="https://www.linkedin.com/in/rebecca-simanjuntak-3b05a4400/" class="btn btn-small btn-primary">
+                                    <span>LinkedIn</span>
+                                    <img src="{% static 'img/Right-Up Arrow.svg' %}" alt="LinkedIn Logo" class="btn-icon arrow-icon">
+                                </a>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 {{name}}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
-        </div>
-    </footer>
-</body>
-</html>
+    </section>
+</main>
+{% endblock content %}
