@@ -149,3 +149,104 @@ collides with unrelated static footer text. This is the version I kept.
 
 **Prompting/chat log:**
 Full conversation log available at: https://claude.ai/share/c8908741-3948-4e1d-a41e-3e2f127c3f7a
+
+## Assignment 3
+### Outline
+Created a new section 'Skills' because I felt that the other sections I had on my website doesn't need a form mechanism and data delivery workflow. The implementation of ModelForm required in assignment-3 is better fit if I implement it in the Skills section as it would be efficient if I have a button that could easily add, delete, and edit skills (in comparison in implementing the mechanism in education, where I felt it would be more efficient if the admin add the data immediately).
+
+### Reflective Questions
+1. I used 'ModelForm' because it automatically generates form fields that
+matches the model's schema - which saves time because then I don't need
+to write repetitive HTML <input> tags and manual validation logic. The
+mechanism natively handles data validation, rendering, and saving to the
+database, making the development workflow much faster and cleaner. This 
+mechanism also allows Django to automatically verify specific inputs, 
+such as double-checking that a URL field actually contains a properly 
+formatted web address. 
+
+It is required to add {% csrf_token %} to protect the website from 
+Cross-Site Request Forgery (CSRF) attack. This will insert a hidden, 
+unique cryptographic token into the form, and when the form is submitted, 
+Django will check if the token matches. If a malicious site/user tries to 
+trick a user's browser into submitting a forged POST request to the 
+server, the malicious request will fail because the attacker doesn't have 
+the correct token.
+
+2. JSON is preferred over XML because it is more readable to humans, but 
+also faster for computers to parse. This is because JSON syntax maps 
+directly to native data structures in JavaScript (a programming language 
+used by modern websites), it integrates seamlessly into modern frontend 
+web development without needing complex parsers. On the other hand, XML 
+relies on heavy and verbose opening and closing tags, which increases 
+payload sizes and processing time.
+
+
+## Assignment 3
+### Outline
+Created a new section 'Skills' because I felt that the other sections I had on my website doesn't need a form mechanism and data delivery workflow. The implementation of ModelForm required in assignment-3 is better fit if I implement it in the Skills section as it would be efficient if I have a button that could easily add, delete, and edit skills (in comparison in implementing the mechanism in education, where I felt it would be more efficient if the admin add the data immediately).
+
+### Reflective Questions
+1. I used 'ModelForm' because it automatically generates form fields that
+matches the model's schema - which saves time because then I don't need
+to write repetitive HTML <input> tags and manual validation logic. The
+mechanism natively handles data validation, rendering, and saving to the
+database, making the development workflow much faster and cleaner. This 
+mechanism also allows Django to automatically verify specific inputs, 
+such as double-checking that a URL field actually contains a properly 
+formatted web address. 
+
+It is required to add {% csrf_token %} to protect the website from 
+Cross-Site Request Forgery (CSRF) attack. This will insert a hidden, 
+unique cryptographic token into the form, and when the form is submitted, 
+Django will check if the token matches. If a malicious site/user tries to 
+trick a user's browser into submitting a forged POST request to the 
+server, the malicious request will fail because the attacker doesn't have 
+the correct token.
+
+2. JSON is preferred over XML because it is more readable to humans, but 
+also faster for computers to parse. This is because JSON syntax maps 
+directly to native data structures in JavaScript (a programming language 
+used by modern websites), it integrates seamlessly into modern frontend 
+web development without needing complex parsers. On the other hand, XML 
+relies on heavy and verbose opening and closing tags, which increases 
+payload sizes and processing time.
+
+3. When a request hits the JSON view (e.g., `get_skills_json`), the view 
+queries the database using Django's ORM (e.g., `Skill.objects.all()`) 
+which returns a `QuerySet` of complex Python objects. It cannot send
+Python objects directly over the internet over HTTP. It must perform 
+**serialization** to translate these complex Django model objects into a 
+universal text-based format (JSON) that can be transmitted via HTTP and 
+understood by any client (like a web browser). Django's `serializers.
+serialize("json", data)` converts the QuerySet into a JSON string, which 
+is then wrapped in an `HttpResponse` with the `application/json` content 
+type and sent back to the client.
+
+### AI Disclosure
+
+**Tool used:** Claude Sonnet 5 - Medium (Anthropic)
+
+**What it was used for:**
+- Refactoring the Skills section to use a modern, glassmorphic UI via the native HTML5 Popover API.
+- Debugging overlapping/duplicate UI elements (e.g., when the delete modal's button accidentally rendered twice on the grid).
+- Investigating why a Google Drive image was displaying a "white grid" background instead of true transparency.
+- Unifying CSS font sizing and family inheritance across different HTML elements (`<a>` vs `<button>`).
+
+**Prompting strategy:**
+For the initial prompt, I used a highly structured and explicit strategy tailored specifically for Claude:
+- **Being explicit and direct:** I avoided vague briefs and treated the AI like a new employee, giving clear constraints (e.g., "strictly HTML5/CSS, no JavaScript allowed").
+- **Using XML tags:** I structured the context and rules using XML tags (like `<context>` and `<rules>`), which Claude reads very reliably.
+- **Showing few-shot examples:** I provided diverse examples of the exact output format I wanted to prevent Claude from guessing the tone.
+- **Breaking tasks into sequential steps:** I used bullet points to guide the AI through the multi-step reasoning for building the UI layout.
+- **Setting guardrails:** I explicitly commanded the AI to stick to the rules and prevent hallucinations.
+- **Prefilling the response:** I seeded the first few characters to lock in the output format.
+
+This initial structured prompt was highly effective because it immediately locked Claude into the correct architectural constraints (pure HTML/CSS) and prevented it from generating bloated, out-of-scope solutions. From there, I worked iteratively by describing specific layout issues and visual bugs as they occurred in the browser. For instance, when the modal's close button wasn't working, I explained the exact behavior to the AI so it could trace the issue back to CSS positioning and `z-index`.
+**What I changed or fixed manually (What advice I took vs rejected):**
+The AI initially tried to solve the non-functional close button by adding a JavaScript fallback (`onclick="this.closest('[popover]').hidePopover()"`). I explicitly rejected this advice because the assignment rules strictly forbid JavaScript. I forced the AI to revert to a pure HTML5/CSS solution using the `popovertarget` attribute. I also manually directed the visual design, rejecting the AI's initial portrait-oriented modal and instructing it to restructure the layout into a wider, landscape-oriented rectangle to save vertical space.
+
+**Critical reflection on AI limitations:**
+The AI struggled significantly with the new HTML5 Popover API's default browser behaviors. When trying to style the modal, the AI blindly applied `display: flex;` to the `.skill-popover` class. This completely overrode the browser's native `display: none` rule for popovers, causing every single skill modal to render simultaneously on page load and blocking the screen. The AI failed to realize this until I explicitly pointed out that the popups were acting like they were hardcoded open. This highlighted that while AI is great at writing general CSS, it can easily break native browser functionality if it doesn't account for implicit User Agent stylesheets.
+
+**Prompting/chat log:**
+Full conversation log available at: https://claude.ai/share/62c55a60-9451-4f12-91ad-75a918078c70
