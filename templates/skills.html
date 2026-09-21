@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block meta %}
+    <title>Skills - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+<main>
+    <!-- SKILLS SECTION -->
+    <section class="skills-section" id="skills">
+        <div class="container skills-container">
+            <div class="skills-header">
+                <div>
+                    <p class="section-kicker">STACK</p>
+                    <h1>Tools and technologies I work with</h1>
+                    <p class="section-subtitle">A visual snapshot of the tools and technologies I use across programming, web development, and workflow.</p>
+                </div>
+                <a href="{% url 'main:create_skill' %}" class="btn btn-primary skill-add-button">
+                    <span aria-hidden="true">+</span>
+                    Add Skill
+                </a>
+            </div>
+
+            <!-- SEARCH FORM -->
+            <form method="get" action="{% url 'main:show_skills' %}" class="skill-search">
+                <input type="search" name="name" value="{{ title_query }}" placeholder="Search technologies..." class="skill-search__input" aria-label="Search technologies">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
+            <div class="skills-grid">
+                {% for skill in skill_list %}
+                <article class="skill-card" title="{{ skill.description }}">
+                    <div class="skill-logo-container">
+                        {% if skill.logo_url %}
+                            <img src="{{ skill.logo_url }}" alt="{{ skill.name }} Logo" class="skill-logo">
+                        {% else %}
+                            <div class="skill-logo-placeholder"></div>
+                        {% endif %}
+                    </div>
+                    <h3 class="skill-name">{{ skill.name }}</h3>
+
+                    <!-- Hover Actions -->
+                    <div class="skill-actions">
+                        <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-small btn-secondary">Edit</a>
+                        {% include "components/skill_delete_modal.html" with skill=skill %}
+                    </div>
+                </article>
+                {% empty %}
+                    {% if title_query %}
+                        <p class="empty-state">No technologies found matching your search.</p>
+                    {% else %}
+                        <p class="empty-state">No technologies have been added yet.</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

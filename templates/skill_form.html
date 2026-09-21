@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block meta %}
+    <title>{% if is_update %}Edit{% else %}Add{% endif %} Skill - {{ name }}</title>
+{% endblock meta %}
+
+{% block content %}
+<main>
+    <section class="form-section">
+        <div class="container">
+            <h1>{% if is_update %}Edit Skill{% else %}Add New Technology{% endif %}</h1>
+            <form method="post" class="custom-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <p class="form-error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">{% if is_update %}Update{% else %}Add{% endif %} Skill</button>
+                    <a href="{% url 'main:show_skills' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+{% endblock content %}
