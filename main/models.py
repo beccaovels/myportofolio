@@ -79,3 +79,17 @@ class Education(models.Model):
     @property
     def is_ongoing(self):
         return self.ended_at is None
+
+class Skill(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    logo_url = models.URLField(blank=True, null=True)
+    years_of_experience = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name
