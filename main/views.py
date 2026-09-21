@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from main.forms import ExperienceForm
-from main.models import Experience, Education
+from main.forms import ExperienceForm, SkillForm
+from main.models import Experience, Education, Skill
 from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
@@ -86,3 +86,95 @@ def delete_experience(request, project_id):
         return redirect("main:show_experience")
 
     return redirect("main:show_experience")
+
+
+def get_skills_json(request):
+    """
+    Retrieve all Skill objects from the database and serialize them into JSON format.
+    Supports optional case-insensitive filtering by the 'name' query parameter.
+    """
+    title_query = request.GET.get("name", "").strip()
+    skills = Skill.objects.all()
+
+    if title_query:
+        skills = skills.filter(name__icontains=title_query)
+
+    skills_json = serializers.serialize("json", skills)
+    return HttpResponse(skills_json, content_type="application/json")
+
+
+def show_skills(request):
+    """
+    Render the main skills page by first fetching the JSON data via get_skills_json,
+    deserializing it back into Django model instances, and passing it to the template.
+    """
+    json_response = get_skills_json(request)
+
+    skills_deserialized = serializers.deserialize(
+        "json",
+        json_response.content.decode("utf-8"),
+    )
+    skills = [s.object for s in skills_deserialized]
+    title_query = request.GET.get("name", "").strip()
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "skill_list": skills,
+        "title_query": title_query,
+    }
+    return render(request, "skills.html", context)
+
+
+def create_skill(request):
+    """
+    Handle the creation of a new Skill object using a ModelForm.
+    If the request is POST and valid, saves the skill and redirects.
+    """
+    form = SkillForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "New skill successfully added!")
+        return redirect("main:show_skills")
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "form": form,
+    }
+    return render(request, "skill_form.html", context)
+
+
+def update_skill(request, id):
+    """
+    Handle the modification of an existing Skill object using a ModelForm.
+    If the request is POST and valid, updates the skill and redirects.
+    """
+    skill = get_object_or_404(Skill, pk=id)
+    form = SkillForm(request.POST or None, instance=skill)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Skill updated successfully!")
+        return redirect("main:show_skills")
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "form": form,
+        "is_update": True,
+    }
+    return render(request, "skill_form.html", context)
+
+
+def delete_skill(request, id):
+    """
+    Handle the deletion of an existing Skill object.
+    Only allows deletion via POST requests for security.
+    """
+    skill = get_object_or_404(Skill, pk=id)
+
+    if request.method == "POST":
+        skill.delete()
+        messages.success(request, "Skill deleted successfully!")
+        return redirect("main:show_skills")
+
+    return redirect("main:show_skills")

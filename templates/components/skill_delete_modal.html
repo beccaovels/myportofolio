@@ -1,0 +1,18 @@
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-skill-{{ skill.id }}" class="custom-delete-modal" popover="auto" role="dialog" aria-modal="true" aria-labelledby="delete-skill-title-{{ skill.id }}">
+    <button type="button" class="custom-delete-modal__backdrop" popovertarget="delete-skill-{{ skill.id }}" popovertargetaction="hide" aria-label="Close delete confirmation"></button>
+    <div class="custom-delete-modal__content">
+        <button type="button" class="custom-delete-modal__close" popovertarget="delete-skill-{{ skill.id }}" popovertargetaction="hide" aria-label="Close delete confirmation">&times;</button>
+        <h2 id="delete-skill-title-{{ skill.id }}">Delete Technology?</h2>
+        <p>Are you sure you want to delete <strong>{{ skill.name }}</strong>?</p>
+        
+        <div class="custom-delete-modal__actions">
+            <button type="button" class="btn btn-secondary" popovertarget="delete-skill-{{ skill.id }}" popovertargetaction="hide">Cancel</button>
+            <form method="post" action="{% url 'main:delete_skill' skill.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
