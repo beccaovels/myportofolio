@@ -89,6 +89,10 @@ def delete_experience(request, project_id):
 
 
 def get_skills_json(request):
+    """
+    Retrieve all Skill objects from the database and serialize them into JSON format.
+    Supports optional case-insensitive filtering by the 'name' query parameter.
+    """
     title_query = request.GET.get("name", "").strip()
     skills = Skill.objects.all()
 
@@ -100,6 +104,10 @@ def get_skills_json(request):
 
 
 def show_skills(request):
+    """
+    Render the main skills page by first fetching the JSON data via get_skills_json,
+    deserializing it back into Django model instances, and passing it to the template.
+    """
     json_response = get_skills_json(request)
 
     skills_deserialized = serializers.deserialize(
@@ -118,6 +126,10 @@ def show_skills(request):
 
 
 def create_skill(request):
+    """
+    Handle the creation of a new Skill object using a ModelForm.
+    If the request is POST and valid, saves the skill and redirects.
+    """
     form = SkillForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -133,6 +145,10 @@ def create_skill(request):
 
 
 def update_skill(request, id):
+    """
+    Handle the modification of an existing Skill object using a ModelForm.
+    If the request is POST and valid, updates the skill and redirects.
+    """
     skill = get_object_or_404(Skill, pk=id)
     form = SkillForm(request.POST or None, instance=skill)
 
@@ -150,6 +166,10 @@ def update_skill(request, id):
 
 
 def delete_skill(request, id):
+    """
+    Handle the deletion of an existing Skill object.
+    Only allows deletion via POST requests for security.
+    """
     skill = get_object_or_404(Skill, pk=id)
 
     if request.method == "POST":
