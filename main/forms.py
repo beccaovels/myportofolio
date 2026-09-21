@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.models import ModelForm
-from main.models import Experience
+from main.models import Experience, Skill
 
 
 class ExperienceForm(ModelForm):
@@ -52,6 +52,50 @@ class ExperienceForm(ModelForm):
             'ended_at': forms.DateInput(
                 attrs={
                     'type': 'date',
+                }
+            ),
+        }
+
+
+class SkillForm(ModelForm):
+    class Meta:
+        model = Skill
+        fields = [
+            'name',
+            'description',
+            'logo_url',
+            'years_of_experience',
+        ]
+
+        labels = {
+            'name': 'Technology Name',
+            'description': 'Description',
+            'logo_url': 'Logo URL',
+            'years_of_experience': 'Years of Experience',
+        }
+
+        widgets = {
+            'name': forms.TextInput(
+                attrs={
+                    'placeholder': 'e.g. Python, React',
+                    'maxlength': 255,
+                }
+            ),
+            'description': forms.Textarea(
+                attrs={
+                    'placeholder': 'A brief description',
+                    'rows': 3,
+                }
+            ),
+            'logo_url': forms.URLInput(
+                attrs={
+                    'placeholder': 'https://...',
+                }
+            ),
+            'years_of_experience': forms.NumberInput(
+                attrs={
+                    'placeholder': 'e.g. 3',
+                    'min': 0,
                 }
             ),
         }
