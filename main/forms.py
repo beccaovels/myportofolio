@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.forms.models import ModelForm
 from main.models import Experience, Skill
@@ -62,16 +63,14 @@ class SkillForm(ModelForm):
         model = Skill
         fields = [
             'name',
-            'description',
             'logo_url',
-            'years_of_experience',
+            'description',
         ]
 
         labels = {
             'name': 'Technology Name',
-            'description': 'Description',
             'logo_url': 'Logo URL',
-            'years_of_experience': 'Years of Experience',
+            'description': 'Description',
         }
 
         widgets = {
@@ -81,21 +80,25 @@ class SkillForm(ModelForm):
                     'maxlength': 255,
                 }
             ),
+            'logo_url': forms.URLInput(
+                attrs={
+                    'placeholder': 'https://...',
+                }
+            ),
             'description': forms.Textarea(
                 attrs={
                     'placeholder': 'A brief description',
                     'rows': 3,
                 }
             ),
-            'logo_url': forms.URLInput(
-                attrs={
-                    'placeholder': 'https://...',
-                }
-            ),
-            'years_of_experience': forms.NumberInput(
-                attrs={
-                    'placeholder': 'e.g. 3',
-                    'min': 0,
-                }
-            ),
         }
+
+    def clean_logo_url(self):
+        url = self.cleaned_data.get('logo_url')
+        if url and 'drive.google.com/file/d/' in url:
+            # Automatically convert Google Drive 'view' links to raw image 'thumbnail' links
+            match = re.search(r'/d/([a-zA-Z0-9_-]+)', url)
+            if match:
+                file_id = match.group(1)
+                return f"https://drive.google.com/thumbnail?id={file_id}&sz=w1000"
+        return url

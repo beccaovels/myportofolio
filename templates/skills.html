@@ -28,7 +28,8 @@
 
             <div class="skills-grid">
                 {% for skill in skill_list %}
-                <article class="skill-card" title="{{ skill.description }}">
+                <!-- Card is now a button that triggers the modal -->
+                <button type="button" class="skill-card" popovertarget="skill-details-{{ skill.id }}">
                     <div class="skill-logo-container">
                         {% if skill.logo_url %}
                             <img src="{{ skill.logo_url }}" alt="{{ skill.name }} Logo" class="skill-logo">
@@ -37,13 +38,35 @@
                         {% endif %}
                     </div>
                     <h3 class="skill-name">{{ skill.name }}</h3>
+                </button>
 
-                    <!-- Hover Actions -->
-                    <div class="skill-actions">
-                        <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-small btn-secondary">Edit</a>
-                        {% include "components/skill_delete_modal.html" with skill=skill %}
+                <!-- Skill Details Modal -->
+                <div id="skill-details-{{ skill.id }}" class="skill-popover" popover="auto">
+                    <div class="skill-popover-top-bar">
+                        <button type="button" class="skill-popover-close" popovertarget="skill-details-{{ skill.id }}">&times;</button>
                     </div>
-                </article>
+                    
+                    <div class="skill-popover-header">
+                        <div class="skill-logo-container skill-logo-large">
+                            {% if skill.logo_url %}
+                                <img src="{{ skill.logo_url }}" alt="{{ skill.name }} Logo" class="skill-logo">
+                            {% else %}
+                                <div class="skill-logo-placeholder"></div>
+                            {% endif %}
+                        </div>
+                        <h2>{{ skill.name }}</h2>
+                    </div>
+                    
+                    <p class="skill-popover-desc">{{ skill.description|default:"No description provided." }}</p>
+                    
+                    <div class="skill-popover-actions">
+                        <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-secondary">Edit</a>
+                        <button type="button" class="btn btn-danger" popovertarget="delete-skill-{{ skill.id }}">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal (Existing) -->
+                {% include "components/skill_delete_modal.html" with skill=skill %}
                 {% empty %}
                     {% if title_query %}
                         <p class="empty-state">No technologies found matching your search.</p>

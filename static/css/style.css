@@ -15,6 +15,7 @@
     --accent-dark: #565F48;
     --accent-secondary: #e8d66a;
     --bright-green: #a3c957;
+    --nav-max-width: 1062px;
 }
 
 /* ============================================================
@@ -32,7 +33,8 @@ html {
 #profile,
 #education,
 #experience {
-    scroll-margin-top: 100px; /* adjust to roughly your navbar's height + spacing */
+    scroll-margin-top: 100px;
+    /* adjust to roughly your navbar's height + spacing */
 }
 
 /* Used in: all pages */
@@ -405,7 +407,7 @@ body {
     margin: 2rem auto 0.75rem;
     padding: 5 1rem;
     display: flex;
-    align-items: center; 
+    align-items: center;
     gap: 1.5rem;
     justify-content: space-between;
 }
@@ -564,153 +566,170 @@ details[open] summary .close-icon {
     animation: fadeIn 0.25s ease-out forwards;
 }
 
-.edu-expanded-glass::-webkit-scrollbar { width: 4px; }
-.edu-expanded-glass::-webkit-scrollbar-track { background: transparent; }
-.edu-expanded-glass::-webkit-scrollbar-thumb { background: rgba(246, 241, 231, 0.3); border-radius: 2px; }
+.edu-expanded-glass::-webkit-scrollbar {
+    width: 4px;
+}
+
+.edu-expanded-glass::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.edu-expanded-glass::-webkit-scrollbar-thumb {
+    background: rgba(246, 241, 231, 0.3);
+    border-radius: 2px;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /*tutor-3*/
 .experience-form-section {
-  padding: 3rem 1rem;
-  background: #f4efe6; /* cream background like in the screenshot */
+    padding: 3rem 1rem;
+    background: #f4efe6;
+    /* cream background like in the screenshot */
 }
 
 .experience-card--form {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: #1e1b30; /* dark navy card */
-  border-radius: 1.5rem;
-  color: #f4efe6;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #1e1b30;
+    /* dark navy card */
+    border-radius: 1.5rem;
+    color: #f4efe6;
 }
 
 .experience-card--form .form-group {
-  margin-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .experience-card--form .form-row {
-  display: flex;
-  gap: 1rem;
+    display: flex;
+    gap: 1rem;
 }
 
 .experience-card--form .form-row .form-group {
-  flex: 1;
+    flex: 1;
 }
 
 .experience-card--form label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-weight: 700;
-  color: #f4efe6;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+    color: #f4efe6;
 }
 
 .experience-card--form input,
 .experience-card--form textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.7rem;
-  border: 1px solid rgba(244, 239, 230, 0.25);
-  border-radius: 0.75rem;
-  background: rgba(244, 239, 230, 0.08);
-  color: #f4efe6;
-  font: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.7rem;
+    border: 1px solid rgba(244, 239, 230, 0.25);
+    border-radius: 0.75rem;
+    background: rgba(244, 239, 230, 0.08);
+    color: #f4efe6;
+    font: inherit;
 }
 
 .experience-card--form input::placeholder,
 .experience-card--form textarea::placeholder {
-  color: rgba(244, 239, 230, 0.5);
+    color: rgba(244, 239, 230, 0.5);
 }
 
 .experience-card--form input:focus,
 .experience-card--form textarea:focus {
-  outline: 2px solid var(--bright-green); /* the green accent from your screenshot */
-  border-color: var(--bright-green);
+    outline: 2px solid var(--bright-green);
+    /* the green accent from your screenshot */
+    border-color: var(--bright-green);
 }
 
 /* Category buttons */
 .btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .btn-choice input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .btn-choice:hover {
-  background: rgba(163, 201, 87, 0.15);   
-  border-color: var(--bright-green);
+    background: rgba(163, 201, 87, 0.15);
+    border-color: var(--bright-green);
 }
 
 .btn-choice {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(244, 239, 230, 0.35);
-  border-radius: 999px;
-  cursor: pointer;
-  user-select: none;
-  color: #f4efe6;
-  transition: background 0.15s, border-color 0.15s;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(244, 239, 230, 0.35);
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    color: #f4efe6;
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .btn-choice:has(input:checked) {
-  background: var(--bright-green);
-  border-color: var(--paper);
-  color: var(--ink);
-  font-weight: 700;
+    background: var(--bright-green);
+    border-color: var(--paper);
+    color: var(--ink);
+    font-weight: 700;
 }
 
 .btn-choice:has(input:checked):hover {
-  background: var(--bright-green);
+    background: var(--bright-green);
 }
 
 .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 999px;      
-  padding: 0.65rem 1.5rem;
-  background: var(--bright-green);       
-  color: #1e1b30;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 700;
-  text-decoration: none;
-  transition: background 0.15s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.65rem 1.5rem;
+    background: var(--bright-green);
+    color: #1e1b30;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.1s;
 }
 
 .button:hover {
-  background: #8fb849;
+    background: #8fb849;
 }
 
 .button-secondary {
-  background: transparent;
-  border: 1px solid rgba(244, 239, 230, 0.35);
-  color: #f4efe6;
+    background: transparent;
+    border: 1px solid rgba(244, 239, 230, 0.35);
+    color: #f4efe6;
 }
 
 .button-secondary:hover {
-  background: rgba(244, 239, 230, 0.08);
+    background: rgba(244, 239, 230, 0.08);
 }
 
 .experience-card-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
 }
 
 .form-error {
-  color: #ff8a80;
-  font-size: 0.85rem;
-  margin-top: 0.35rem;
+    color: #ff8a80;
+    font-size: 0.85rem;
+    margin-top: 0.35rem;
 }
 
 /*experience-delete*/
@@ -931,6 +950,7 @@ details[open] summary .close-icon {
    RESPONSIVE — TABLET / MOBILE (≤768px)
    ============================================================ */
 @media (max-width: 768px) {
+
     /* Used in: all pages */
     .container {
         width: 100%;
@@ -1085,6 +1105,7 @@ details[open] summary .close-icon {
    RESPONSIVE — SMALL MOBILE (≤480px)
    ============================================================ */
 @media (max-width: 480px) {
+
     /* Used in: all pages */
     .navbar {
         width: calc(100% - 1.5rem);
@@ -1127,18 +1148,18 @@ details[open] summary .close-icon {
     }
 }
 
-/* ============================================================
-   SKILLS SECTION (GLASSMORPHISM CAROUSEL/GRID)
-   ============================================================ */
+/* SKILLS */
 .skills-section {
-    background-color: #1a1e1b;
+    width: min(100% - 3rem, var(--nav-max-width));
+    margin: 3rem auto;
     padding: 4rem 0;
-    margin: 3rem 1.5rem;
     border-radius: 24px;
+    background-color: var(--ink);
 }
 
+
 .skills-container {
-    max-width: 1062px;
+    max-width: none;
     margin: 0 auto;
     padding: 0 3rem;
 }
@@ -1157,6 +1178,15 @@ details[open] summary .close-icon {
     font-family: inherit;
 }
 
+.skills-section .btn {
+    border-radius: 9999px;
+    padding: 0.7rem 1.5rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .section-kicker {
     color: #7b9c7b;
     font-size: 0.85rem;
@@ -1167,9 +1197,13 @@ details[open] summary .close-icon {
 }
 
 .section-subtitle {
-    color: #9ba09d;
+    color: rgba(255, 255, 255, 0.85);
     font-size: 1rem;
     max-width: 600px;
+}
+
+.empty-state {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .skill-search {
@@ -1192,6 +1226,7 @@ details[open] summary .close-icon {
     flex-wrap: wrap;
     gap: 1.5rem;
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .skill-card {
@@ -1200,14 +1235,19 @@ details[open] summary .close-icon {
     border-radius: 16px;
     padding: 1.5rem 1rem;
     width: 140px;
-    height: 140px;
+    min-height: 140px;
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    transition: background 0.2s, transform 0.2s;
-    position: relative;
+    justify-content: flex-start;
+    transition: background 0.3s, transform 0.3s, min-height 0.3s ease;
+    cursor: pointer;
     overflow: hidden;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    appearance: none;
 }
 
 .skill-card:hover {
@@ -1236,7 +1276,7 @@ details[open] summary .close-icon {
 .skill-logo-placeholder {
     width: 100%;
     height: 100%;
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
 }
 
@@ -1247,31 +1287,124 @@ details[open] summary .close-icon {
     text-align: center;
 }
 
-.skill-actions {
-    position: absolute;
-    bottom: -40px;
-    display: flex;
+/* Skill Popover Modal */
+.skill-popover {
+    margin: auto;
+    padding: 1.5rem 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(30, 33, 48, 0.95);
+    backdrop-filter: blur(10px);
+    color: #e0e0e0;
+    width: min(95%, 550px);
+    
+    /* Hide by default, just like the delete modal */
+    display: none;
     flex-direction: column;
-    gap: 0.2rem;
+    align-items: stretch;
+    text-align: left;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    
+    /* Transition defaults */
     opacity: 0;
-    transition: opacity 0.2s, bottom 0.2s;
-    background: rgba(0,0,0,0.7);
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    left: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s, display 0.3s allow-discrete;
 }
 
-.skill-card:hover .skill-actions {
+/* Only display flex when popover is open */
+.skill-popover:popover-open {
+    display: flex;
     opacity: 1;
-    bottom: 0;
+    transform: translateY(0);
+}
+
+.skill-popover::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.skill-popover-top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: -1rem;
+    z-index: 10;
+}
+
+.skill-popover-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.5rem;
+    pointer-events: auto;
+    transition: color 0.2s;
+}
+
+.skill-popover-close:hover {
+    color: #fff;
+}
+
+.skill-popover-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.skill-popover-header h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.6rem;
+}
+
+.skill-logo-large {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 0;
+    padding: 12px;
+}
+
+.skill-popover-desc {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.skill-popover-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.skill-popover-actions .btn {
+    min-width: 120px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    justify-content: center;
+}
+
+
+
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white !important;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
 .btn-danger {
     background-color: #d9534f;
-    color: white;
+    color: white !important;
 }
+
 .btn-danger:hover {
     background-color: #c9302c;
 }

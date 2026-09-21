@@ -85,7 +85,6 @@ class Skill(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     logo_url = models.URLField(blank=True, null=True)
-    years_of_experience = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
