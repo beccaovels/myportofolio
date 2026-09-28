@@ -5,10 +5,16 @@ from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+import datetime
 
 
 
 def show_main(request):
+    last_login = request.COOKIES.get('last_login', 'No active login session / Cookie not found')
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
         "hero_name1": "Rebecca Love",
@@ -18,8 +24,48 @@ def show_main(request):
         "bio": (
             "A deeply driven undergraduate student striving to create tech solutions for a better life. As an enthusiast in AI/ML, I'm eager to learn how this field can address complex issues ranging from cybersecurity to biomedical sciences, as I continue to collaborate, learn, and grow as a problem-solver."
         ),
+        "last_login": last_login,
     }
     return render(request, "index.html", context)
+
+
+def register(request):
+    form = UserCreationForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Account created successfully. Please log in.")
+        return redirect("main:login")
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "form": form,
+    }
+    return render(request, "register.html", context)
+
+
+def login_user(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        response = redirect("main:show_main")
+        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        return response
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "form": form,
+    }
+    return render(request, "login.html", context)
+
+
+def logout_user(request):
+    logout(request)
+    response = redirect("main:show_main")
+    response.delete_cookie('last_login')
+    return response
 
 
 def show_experience(request):
@@ -36,7 +82,11 @@ def show_education(request):
     }
     return render(request, "education.html", context)
 
+@login_required(login_url="/login/")
 def create_experience(request):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     form = ExperienceForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -57,7 +107,9 @@ def get_experience_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    projects_json = serializers.serialize("json", projects)
+    projects_json = serializers.serialize(
+        "json", projects, use_natural_foreign_keys=True
+    )
     return HttpResponse(projects_json, content_type="application/json")
 
 def show_experience(request):
@@ -77,7 +129,23 @@ def show_experience(request):
     }
     return render(request, "experience.html", context)
 
+@login_required(login_url="/login/")
+def toggle_star(request, project_id):
+    project = get_object_or_404(Experience, pk=project_id)
+    
+    if request.method == "POST":
+        if request.user in project.starred_by.all():
+            project.starred_by.remove(request.user)
+        else:
+            project.starred_by.add(request.user)
+            
+    return redirect("main:show_experience")
+
+@login_required(login_url="/login/")
 def delete_experience(request, project_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     project = get_object_or_404(Experience, pk=project_id)
 
     if request.method == "POST":
@@ -124,12 +192,15 @@ def show_skills(request):
     }
     return render(request, "skills.html", context)
 
-
+@login_required(login_url="/login/")
 def create_skill(request):
     """
     Handle the creation of a new Skill object using a ModelForm.
     If the request is POST and valid, saves the skill and redirects.
     """
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     form = SkillForm(request.POST or None)
 
     if request.method == "POST" and form.is_valid():
@@ -143,12 +214,15 @@ def create_skill(request):
     }
     return render(request, "skill_form.html", context)
 
-
+@login_required(login_url="/login/")
 def update_skill(request, id):
     """
     Handle the modification of an existing Skill object using a ModelForm.
     If the request is POST and valid, updates the skill and redirects.
     """
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     skill = get_object_or_404(Skill, pk=id)
     form = SkillForm(request.POST or None, instance=skill)
 
@@ -164,12 +238,15 @@ def update_skill(request, id):
     }
     return render(request, "skill_form.html", context)
 
-
+@login_required(login_url="/login/")
 def delete_skill(request, id):
     """
     Handle the deletion of an existing Skill object.
     Only allows deletion via POST requests for security.
     """
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     skill = get_object_or_404(Skill, pk=id)
 
     if request.method == "POST":
