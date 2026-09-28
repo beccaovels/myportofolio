@@ -250,3 +250,28 @@ The AI struggled significantly with the new HTML5 Popover API's default browser 
 
 **Prompting/chat log:**
 Full conversation log available at: https://claude.ai/share/62c55a60-9451-4f12-91ad-75a918078c70
+
+## Assignment 4
+### Reflective Questions
+[Insert your answers for Assignment 4's reflective questions here]
+
+### AI Disclosure
+
+**Tool used:** Gemini (Google)
+
+**What it was used for:**
+- Explaining how to manually test server-side access controls (HTTP 403 Forbidden and HTTP 302 Redirects) across four different user roles via the browser.
+- Debugging a session state issue where attempting to trigger a 403 Forbidden error incorrectly resulted in a redirect to the `/login/` page.
+- Clarifying the process of assigning regular users to the "Editor" group via the Django Admin panel and managing superuser credentials from the CLI.
+
+**Prompting strategy:**
+I used a contextual and iterative prompting strategy. Instead of asking the AI to write code for me, I provided the exact code I had already written (`@login_required` decorators, `PermissionDenied` logic, and my `register` view) and asked it to explain *how to test it*. When my manual testing failed (e.g., getting redirected to login instead of hitting a 403 error), I fed the exact behavioral mismatch back to the AI so it could trace the logical flow of the user journey rather than just analyzing the static syntax.
+
+**What I changed or fixed manually (What advice I took vs rejected):**
+I took the AI's advice regarding the user session state: it pointed out that my `register` view redirects to the login page but does not actually authenticate the user. I manually tested this by registering a new account and explicitly logging in before trying to access the restricted `skills/add/` URL, which successfully triggered my 403 Forbidden logic. I rejected relying on the AI to manage my database; instead of asking for scripts to assign roles, I manually navigated the Django Admin interface to create the "Editor" group and assign users to it, ensuring I fully understood how Django's built-in `Group` permissions affect the database.
+
+**Critical reflection on AI limitations:**
+The debugging process highlighted a key limitation in how AI understands application state versus static code logic. When I was unexpectedly redirected to the login page instead of seeing a 403 error, the root cause wasn't a syntax error in the code—it was a flaw in the user journey (registration not granting an active session cookie). The AI is excellent at reading static decorators and view logic, but it struggles to organically anticipate the sequential session state of a user navigating the frontend unless explicitly prompted about the exact sequence of actions taken in the browser.
+
+**Prompting/chat log:**
+Full conversation log available at: https://share.gemini.google/iAA4f3RIwVYO
