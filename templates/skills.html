@@ -62,8 +62,10 @@
                     <p class="skill-popover-desc">{{ skill.description|default:"No description provided." }}</p>
                     
                     <div class="skill-popover-actions">
-                        {% if user.is_superuser %}
+                        {% if user.is_superuser or is_editor %}
                         <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-secondary">Edit</a>
+                        {% endif %}
+                        {% if user.is_superuser %}
                         <button type="button" class="btn btn-danger" popovertarget="delete-skill-{{ skill.id }}">Delete</button>
                         {% endif %}
                     </div>

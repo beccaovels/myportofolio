@@ -121,11 +121,13 @@ def show_experience(request):
     )
     experiences = [experience.object for experience in experiences]
     title_query = request.GET.get("title", "").strip()
+    is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov SImanjuntak",
         "experience_list": experiences,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "experience.html", context)
 
@@ -140,6 +142,26 @@ def toggle_star(request, project_id):
             project.starred_by.add(request.user)
             
     return redirect("main:show_experience")
+
+@login_required(login_url="/login/")
+def update_experience(request, project_id):
+    if not (request.user.is_superuser or request.user.groups.filter(name="Editor").exists()):
+        raise PermissionDenied
+
+    project = get_object_or_404(Experience, pk=project_id)
+    form = ExperienceForm(request.POST or None, instance=project)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Experience updated successfully!")
+        return redirect("main:show_experience")
+
+    context = {
+        "name": "Rebecca Love Lianov Simanjuntak",
+        "form": form,
+        "is_update": True,
+    }
+    return render(request, "experience_form.html", context)
 
 @login_required(login_url="/login/")
 def delete_experience(request, project_id):
@@ -184,11 +206,13 @@ def show_skills(request):
     )
     skills = [s.object for s in skills_deserialized]
     title_query = request.GET.get("name", "").strip()
+    is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
         "skill_list": skills,
         "title_query": title_query,
+        "is_editor": is_editor,
     }
     return render(request, "skills.html", context)
 
@@ -220,7 +244,7 @@ def update_skill(request, id):
     Handle the modification of an existing Skill object using a ModelForm.
     If the request is POST and valid, updates the skill and redirects.
     """
-    if not request.user.is_superuser:
+    if not (request.user.is_superuser or request.user.groups.filter(name="Editor").exists()):
         raise PermissionDenied
 
     skill = get_object_or_404(Skill, pk=id)
