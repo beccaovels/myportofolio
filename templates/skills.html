@@ -14,10 +14,12 @@
                     <h1>Tools and technologies I work with</h1>
                     <p class="section-subtitle">A visual snapshot of the tools and technologies I use across programming, web development, and workflow.</p>
                 </div>
+                {% if user.is_superuser %}
                 <a href="{% url 'main:create_skill' %}" class="btn btn-primary skill-add-button">
                     <span aria-hidden="true">+</span>
                     Add Skill
                 </a>
+                {% endif %}
             </div>
 
             <!-- SEARCH FORM -->
@@ -60,8 +62,10 @@
                     <p class="skill-popover-desc">{{ skill.description|default:"No description provided." }}</p>
                     
                     <div class="skill-popover-actions">
+                        {% if user.is_superuser %}
                         <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-secondary">Edit</a>
                         <button type="button" class="btn btn-danger" popovertarget="delete-skill-{{ skill.id }}">Delete</button>
+                        {% endif %}
                     </div>
                 </div>
 
