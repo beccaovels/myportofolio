@@ -151,6 +151,12 @@ body {
     transition: opacity 0.2s ease;
 }
 
+.nav-user {
+    color: var(--paper);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
 .nav-links a:not(.btn):hover {
     opacity: 0.8;
 }
@@ -252,7 +258,8 @@ body {
 
 .meta-list {
     display: flex;
-    gap: 80px;
+    gap: 30px;
+    flex-wrap: wrap;
     margin-top: 25px;
     margin-bottom: 25px;
 }
