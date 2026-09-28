@@ -107,7 +107,9 @@ def get_experience_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    projects_json = serializers.serialize("json", projects)
+    projects_json = serializers.serialize(
+        "json", projects, use_natural_foreign_keys=True
+    )
     return HttpResponse(projects_json, content_type="application/json")
 
 def show_experience(request):
@@ -126,6 +128,18 @@ def show_experience(request):
         "title_query": title_query,
     }
     return render(request, "experience.html", context)
+
+@login_required(login_url="/login/")
+def toggle_star(request, project_id):
+    project = get_object_or_404(Experience, pk=project_id)
+    
+    if request.method == "POST":
+        if request.user in project.starred_by.all():
+            project.starred_by.remove(request.user)
+        else:
+            project.starred_by.add(request.user)
+            
+    return redirect("main:show_experience")
 
 @login_required(login_url="/login/")
 def delete_experience(request, project_id):
