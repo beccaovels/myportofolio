@@ -53,11 +53,20 @@
     </section>
 </main>
 
+{% if user.is_superuser %}
+    {% include "components/experience_form_modal.html" %}
+{% endif %}
+
 <script>
     // Configuration
     const BASE_EXPERIENCE_ENDPOINT = "{% url 'main:get_experience_json' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
     let experienceAbortController;
+
+    function closeExperienceModal() {
+        const modal = document.getElementById("add-experience-modal");
+        if (modal) modal.hidePopover();
+    }
 
     // DOM elements
     const loadingState = document.getElementById('loading');
@@ -197,6 +206,9 @@
         searchProjects();
     });
 
+    function closeProjectModal() {
+    document.getElementById("add-project-modal").hidePopover();
+}
 
     // Start the application
     fetchExperience(searchInput.value.trim());
