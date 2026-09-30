@@ -53,16 +53,16 @@
 
 <script>
     // Configuration
-    const BASE_PROJECTS_ENDPOINT = "{% url 'main:get_projects_json' %}";
+    const BASE_EXPERIENCE_ENDPOINT = "{% url 'main:get_experience_json' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
-    let projectsAbortController;
+    let experienceAbortController;
 
     // DOM elements
     const loadingState = document.getElementById('loading');
     const errorState = document.getElementById('error');
     const emptyState = document.getElementById('empty');
     const gridContainer = document.getElementById('grid');
-    const searchForm = document.getElementById('project-search-form');
+    const searchForm = document.getElementById('experience-search-form');
     const searchInput = document.getElementById('search-input');
 
     // Show/hide page sections
@@ -73,59 +73,59 @@
         gridContainer.classList.toggle('hide', !showGrid);
     }
 
-    // Build a project card element
-    function buildProjectCardElement(item) {
-        const project = item.fields;
-        const projectId = item.pk;
+    // Build an experience card element
+    function buildExperienceCardElement(item) {
+        const experience = item.fields;
+        const experienceId = item.pk;
 
         const articleElement = document.createElement('article');
-        articleElement.className = 'experience-card';
+        articleElement.className = 'experience-card edu-card';
 
-        const imageHtml = project.project_image_url
-            ? `<img src="${project.project_image_url}" alt="Image of ${project.title}" class="project-image">`
+        const imageHtml = experience.project_image_url
+            ? `<img src="${experience.project_image_url}" alt="Image of ${experience.title}" class="experience-image">`
             : '';
 
-        const urlHtml = project.project_url
-            ? `<a href="${project.project_url}" class="button">View Project</a>`
+        const urlHtml = experience.project_url
+            ? `<a href="${experience.project_url}" class="button">View Experience</a>`
             : '';
 
         // A dummy UUID used as a placeholder to be replaced with the real ID from the JSON data
-        const deleteUrl = "{% url 'main:delete_project' '00000000-0000-0000-0000-000000000000' %}"
-            .replace('00000000-0000-0000-0000-000000000000', projectId);
+        const deleteUrl = "{% url 'main:delete_experience' '00000000-0000-0000-0000-000000000000' %}"
+            .replace('00000000-0000-0000-0000-000000000000', experienceId);
         const starUrl = "{% url 'main:toggle_star' '00000000-0000-0000-0000-000000000000' %}"
-            .replace('00000000-0000-0000-0000-000000000000', projectId);
+            .replace('00000000-0000-0000-0000-000000000000', experienceId);
 
         const deleteHtml = IS_SUPERUSER
             ? `<form method="post" action="${deleteUrl}" style="display:inline;">
                 {% csrf_token %}
-                <button type="submit" class="button button-danger" onclick="return confirm('Are you sure you want to delete this project?');">Delete</button>
+                <button type="submit" class="button button-danger" onclick="return confirm('Are you sure you want to delete this experience?');">Delete</button>
             </form>`
             : '';
 
-        const isStarredClass = project.is_starred ? " is-starred" : "";
-        const starText = project.is_starred ? "Unstar" : "Star";
-        const starTitle = project.star_count > 0
-            ? `Starred by ${project.starred_by_names}`
+        const isStarredClass = experience.is_starred ? " is-starred" : "";
+        const starIcon = experience.is_starred ? "★" : "☆";
+        const starTitle = experience.star_count > 0
+            ? `Starred by ${experience.starred_by_names}`
             : "Be the first to star";
 
         // Card component
         const completeCardHtml = `
             ${imageHtml}
-            <h2>${project.title}</h2>
-            <span class="experience-category">${project.tech_stack}</span>
-            <p class="experience-description">${project.description}</p>
-            <div class="project-card-actions">
-                <div class="project-actions">
+            <h2>${experience.title}</h2>
+            <span class="experience-category">${experience.tech_stack || ''}</span>
+            <p class="experience-description">${experience.description}</p>
+            <div class="experience-card-actions">
+                <div class="experience-actions" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     ${urlHtml}
                     
-                    <form method="post" action="${starUrl}" class="star-form">
+                    <form method="post" action="${starUrl}" class="star-form" style="margin: 0;">
                         {% csrf_token %}
                         <button type="submit" 
                                 class="button button-star${isStarredClass}"
-                                title="${starTitle}">
-                            <span aria-hidden="true">★</span>
-                            ${starText}
-                            <span class="star-count">${project.star_count}</span>
+                                title="${starTitle}"
+                                style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                            <span aria-hidden="true" style="font-size: 1.5em; line-height: 1;">${starIcon}</span>
+                            <span class="star-count">${experience.star_count}</span>
                         </button>
                     </form>
 
@@ -138,37 +138,37 @@
         return articleElement;
     }
 
-    // Fetch project data
-    async function fetchProjects(searchQuery = "") {
-        if (projectsAbortController) projectsAbortController.abort();
-        projectsAbortController = new AbortController();
+    // Fetch experience data
+    async function fetchExperience(searchQuery = "") {
+        if (experienceAbortController) experienceAbortController.abort();
+        experienceAbortController = new AbortController();
 
         try {
             displayPageSection({ showLoading: true });
 
-            const url = searchQuery ? `${BASE_PROJECTS_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : BASE_PROJECTS_ENDPOINT;
+            const url = searchQuery ? `${BASE_EXPERIENCE_ENDPOINT}?title=${encodeURIComponent(searchQuery)}` : BASE_EXPERIENCE_ENDPOINT;
 
             const response = await fetch(url, {
                 headers: { 'Accept': 'application/json' },
-                signal: projectsAbortController.signal,
+                signal: experienceAbortController.signal,
             });
 
             if (!response.ok) throw new Error('Failed to fetch data');
 
-            const projectData = await response.json();
+            const experienceData = await response.json();
 
-            if (projectData.length === 0) {
+            if (experienceData.length === 0) {
                 displayPageSection({ showEmpty: true });
             } else {
                 gridContainer.innerHTML = '';
-                projectData.forEach(item => {
-                    gridContainer.appendChild(buildProjectCardElement(item));
+                experienceData.forEach(item => {
+                    gridContainer.appendChild(buildExperienceCardElement(item));
                 });
                 displayPageSection({ showGrid: true });
             }
         } catch (error) {
             if (error.name === 'AbortError') return;
-            console.error('Error loading projects:', error);
+            console.error('Error loading experience:', error);
             displayPageSection({ showError: true });
         }
     }
@@ -176,10 +176,10 @@
     // Search form event handler
     searchForm.addEventListener('submit', function (e) {
         e.preventDefault(); // Prevent the page from reloading
-        fetchProjects(searchInput.value.trim()); // Run the search via AJAX
+        fetchExperience(searchInput.value.trim()); // Run the search via AJAX
     });
 
     // Start the application
-    fetchProjects(searchInput.value.trim());
+    fetchExperience(searchInput.value.trim());
 </script>
 {% endblock content %}
