@@ -87,6 +87,16 @@
         gridContainer.classList.toggle('hide', !showGrid);
     }
 
+    // Convert special HTML characters into entities so they display as text
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
     // Build an experience card element
     function buildExperienceCardElement(item) {
         const experience = item.fields;
@@ -96,11 +106,11 @@
         articleElement.className = 'experience-card edu-card';
 
         const imageHtml = experience.project_image_url
-            ? `<img src="${experience.project_image_url}" alt="Image of ${experience.title}" class="experience-image">`
+            ? `<img src="${escapeHtml(experience.project_image_url)}" alt="Image of ${escapeHtml(experience.title)}" class="experience-image">`
             : '';
 
         const urlHtml = experience.project_url
-            ? `<a href="${experience.project_url}" class="button">View Experience</a>`
+            ? `<a href="${escapeHtml(experience.project_url)}" class="button">View Experience</a>`
             : '';
 
         // A dummy UUID used as a placeholder to be replaced with the real ID from the JSON data
@@ -119,15 +129,15 @@
         const isStarredClass = experience.is_starred ? " is-starred" : "";
         const starIcon = experience.is_starred ? "★" : "☆";
         const starTitle = experience.star_count > 0
-            ? `Starred by ${experience.starred_by_names}`
+            ? `Starred by ${escapeHtml(experience.starred_by_names)}`
             : "Be the first to star";
 
         // Card component
         const completeCardHtml = `
             ${imageHtml}
-            <h2>${experience.title}</h2>
-            <span class="experience-category">${experience.tech_stack || ''}</span>
-            <p class="experience-description">${experience.description}</p>
+            <h2>${escapeHtml(experience.title)}</h2>
+            <span class="experience-category">${escapeHtml(experience.tech_stack || '')}</span>
+            <p class="experience-description">${escapeHtml(experience.description)}</p>
             <div class="experience-card-actions">
                 <div class="experience-actions" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     ${urlHtml}

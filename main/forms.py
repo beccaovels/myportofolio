@@ -1,6 +1,8 @@
 import re
 from django import forms
 from django.forms.models import ModelForm
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 from main.models import Experience, Skill
 
 
@@ -56,6 +58,20 @@ class ExperienceForm(ModelForm):
                 }
             ),
         }
+
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data.get("title", "")).strip()
+        if not title:
+            raise ValidationError("Experience title can't contain only HTML tags.")
+        return title
+
+    def clean_employer(self):
+        employer = self.cleaned_data.get("employer", "")
+        return strip_tags(employer).strip() if employer else employer
+
+    def clean_description(self):
+        description = self.cleaned_data.get("description", "")
+        return strip_tags(description).strip() if description else description
 
 
 class SkillForm(ModelForm):
