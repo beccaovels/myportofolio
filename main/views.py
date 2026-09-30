@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 import datetime
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def show_main(request):
     last_login = request.COOKIES.get('last_login', 'No active login session / Cookie not found')
@@ -92,6 +93,23 @@ def create_experience(request):
         "form": form,
     }
     return render(request, "experience_form.html", context)
+
+@require_POST
+def create_experience_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Only the portfolio owner can add experiences."},
+            status=403,
+        )
+    
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message": "Experience added successfully.", "pk": str(experience.id)},
+            status=201,
+        )
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 def get_experience_json(request):
     title_query = request.GET.get("title", "").strip()
