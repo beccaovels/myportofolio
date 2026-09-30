@@ -17,10 +17,12 @@
                 </button>
                 <h1>Experience</h1>
                 {% if user.is_superuser %}
-                <a href="{% url 'main:create_experience' %}" class="button experience-add-button">
+                <button type="button"
+                        class="button experience-add-button"
+                        popovertarget="add-experience-modal">
                     <span aria-hidden="true">+</span>
                     Add Experience
-                </a>
+                </button>
                 {% endif %}
             </div>
             <form id="experience-search-form" class="experience-search">

@@ -12,8 +12,6 @@ from django.core.exceptions import PermissionDenied
 import datetime
 from django.http import JsonResponse
 
-
-
 def show_main(request):
     last_login = request.COOKIES.get('last_login', 'No active login session / Cookie not found')
     context = {
@@ -133,6 +131,7 @@ def show_experience(request):
         "name": "Rebecca Love Lianov SImanjuntak",
         "title_query": title_query,
         "is_editor": is_editor,
+        "form" : ExperienceForm(),
     }
     return render(request, "experience.html", context)
 

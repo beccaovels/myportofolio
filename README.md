@@ -162,7 +162,9 @@ mechanism natively handles data validation, rendering, and saving to the
 database, making the development workflow much faster and cleaner. This 
 mechanism also allows Django to automatically verify specific inputs, 
 such as double-checking that a URL field actually contains a properly 
-formatted web address. It is required to add {% csrf_token %} to protect the website from 
+formatted web address. 
+
+It is required to add {% csrf_token %} to protect the website from 
 Cross-Site Request Forgery (CSRF) attack. This will insert a hidden, 
 unique cryptographic token into the form, and when the form is submitted, 
 Django will check if the token matches. If a malicious site/user tries to 
@@ -255,7 +257,7 @@ Full conversation log available at: https://claude.ai/share/62c55a60-9451-4f12-9
 
 ### AI Disclosure
 
-**Tool used:** Gemini (Google)
+**Tool used:** Gemini Pro 3.1 - Low (Google)
 
 **What it was used for:**
 - Explaining how to manually test server-side access controls (HTTP 403 Forbidden and HTTP 302 Redirects) across four different user roles via the browser.
