@@ -23,10 +23,9 @@
                     </a>
                     {% endif %}
                 </div>
-                <form method="get"
-                      action="{% url 'main:show_experience' %}"
-                      class="experience-search">
+                <form id="experience-search-form" class="experience-search">
                     <input type="search"
+                           id="search-input"
                            name="title"
                            value="{{ title_query }}"
                            placeholder="Search by experience title"
@@ -34,51 +33,24 @@
                            aria-label="Search by experience title">
                     <button type="submit" class="button">Search</button>
                 </form>
-                <div class="experience-grid">
-                    {% for experience in experience_list %}
-                        <article class="experience-card edu-card">
-                            <h2>{{ experience.title }}</h2>
-                            <span class="experience-category">{{ experience.get_category_display }}</span>
-                            <p class="edu-date">
-                                {{ experience.started_at|date:"Y" }} -
-                                {% if experience.is_ongoing %}Present{% else %}{{ experience.ended_at|date:"Y" }}{% endif %}
-                            </p>
-                            <p class="experience-description">{{ experience.description }}</p>
 
-                            <details class="expandable-content">
-                                <summary class="edu-card-link" aria-label="Toggle details">
-                                    <img src="{% static 'img/green-arrow.svg' %}" alt="Expand" class="edu-arrow-icon expand-icon">
-                                    <img src="{% static 'img/left-arrow.svg' %}" alt="Close" class="edu-arrow-icon close-icon">
-                                </summary>
-                                <div class="edu-expanded-glass">
-                                    <span class="edu-detail-badge">
-                                        {% if experience.is_ongoing %}Ongoing{% else %}Completed{% endif %}
-                                    </span>
-                                </div>
-                            </details>
-
-                            <div class="experience-card-actions">
-                                <div class="experience-actions">
-                                    {% if user.is_authenticated %}
-                                    {% include "components/experience_star.html" with experience=experience %}
-                                    {% endif %}
-                                    {% if user.is_superuser or is_editor %}
-                                    <a href="{% url 'main:update_experience' experience.id %}" class="button button-secondary" style="padding: 0.3rem 0.8rem;">Edit</a>
-                                    {% endif %}
-                                    {% if user.is_superuser %}
-                                    {% include "components/experience_delete_modal.html" with experience=experience %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </article>
-                    {% empty %}
-                        {% if title_query %}
-                            <p class="empty-state">No experience found with that title.</p>
-                        {% else %}
-                            <p class="empty-state">No experience has been added yet.</p>
-                        {% endif %}
-                    {% endfor %}
+                <!-- Loading State -->
+                <div id="loading" class="empty-state hide">
+                    <p>Loading experiences...</p>
                 </div>
+
+                <!-- Error State -->
+                <div id="error" class="empty-state hide">
+                    <p>Failed to load experience data. Please try again.</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty" class="empty-state hide">
+                    <p>No experiences have been added or found yet.</p>
+                </div>
+
+                <!-- Experience Grid -->
+                <div id="grid" class="experience-grid hide"></div>
             </div>
         </section>
     </main>
