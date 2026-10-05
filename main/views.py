@@ -201,19 +201,30 @@ def delete_experience(request, project_id):
 
 
 def get_skills_json(request):
-    """
-    Retrieve all Skill objects from the database and serialize them into JSON format.
-    Supports optional case-insensitive filtering by the 'name' query parameter.
-    """
-    title_query = request.GET.get("name", "").strip()
-    skills = Skill.objects.all()
+    name_query = request.GET.get("name", "").strip()
+    skills = Skill.objects.prefetch_related("starred_by").all()
 
-    if title_query:
-        skills = skills.filter(name__icontains=title_query)
+    if name_query:
+        skills = skills.filter(name__icontains=name_query)
 
-    skills_json = serializers.serialize("json", skills)
-    return HttpResponse(skills_json, content_type="application/json")
+    data = []
+    for skill in skills:
+        starred_users = skill.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ",".join([u.username for u in starred_users])
 
+        data.append({
+            "pk": str(skill.id),
+            "fields": {
+                "name": skill.name,
+                "description": skill.description or "",
+                "logo_url": skill.logo_url or "",
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+    return JsonResponse(data,safe=False)
 
 def show_skills(request):
     """
