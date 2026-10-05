@@ -90,6 +90,9 @@ class Skill(models.Model):
     description = models.TextField(blank=True, null=True)
     logo_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    starred_by = models.ManyToManyField(
+        User, related_name="starred_skills", blank=True
+    )
 
     class Meta:
         ordering = ["-created_at"]

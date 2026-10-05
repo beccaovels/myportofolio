@@ -1554,3 +1554,30 @@ details[open] summary .close-icon {
         text-align: center;
     }
 }
+/* Glassmorphic Modal Overrides */
+.experience-form-modal__content {
+    background: rgba(30, 27, 48, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 1.5rem !important;
+    color: #f4efe6 !important;
+    padding: 2rem !important;
+}
+.experience-form-modal__content h2 {
+    font-family: inherit !important;
+    color: #f4efe6 !important;
+}
+.experience-form-modal__close {
+    color: rgba(244, 239, 230, 0.6) !important;
+}
+.experience-form-modal__close:hover {
+    color: #f4efe6 !important;
+}
+.experience-form-modal__content .experience-card--form {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    backdrop-filter: none !important;
+}

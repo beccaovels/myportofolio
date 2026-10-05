@@ -146,12 +146,23 @@ def show_experience(request):
     is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
-        "name": "Rebecca Love Lianov SImanjuntak",
+        "name": "Rebecca Love Lianov Simanjuntak",
         "title_query": title_query,
         "is_editor": is_editor,
         "form" : ExperienceForm(),
     }
     return render(request, "experience.html", context)
+
+# function for starring feature exclusively for starred skills
+@login_required(login_url="/login")
+def toggle_skill_star(request,id):
+    skill = get_object_or_404(Skill, pk=id)
+    if request.method == "POST":
+        if request.user in skill.starred_by.all():
+            skill.starred_by.remove(request.user)
+        else:
+            skill.starred_by.add(request.user)
+    return redirect("main:show_skills")
 
 @login_required(login_url="/login/")
 def toggle_star(request, project_id):
@@ -201,42 +212,59 @@ def delete_experience(request, project_id):
 
 
 def get_skills_json(request):
-    """
-    Retrieve all Skill objects from the database and serialize them into JSON format.
-    Supports optional case-insensitive filtering by the 'name' query parameter.
-    """
-    title_query = request.GET.get("name", "").strip()
-    skills = Skill.objects.all()
+    name_query = request.GET.get("name", "").strip()
+    skills = Skill.objects.prefetch_related("starred_by").all()
 
-    if title_query:
-        skills = skills.filter(name__icontains=title_query)
+    if name_query:
+        skills = skills.filter(name__icontains=name_query)
 
-    skills_json = serializers.serialize("json", skills)
-    return HttpResponse(skills_json, content_type="application/json")
+    data = []
+    for skill in skills:
+        starred_users = skill.starred_by.all()
+        is_starred = request.user in starred_users if request.user.is_authenticated else False
+        starred_by_names = ",".join([u.username for u in starred_users])
 
+        data.append({
+            "pk": str(skill.id),
+            "fields": {
+                "name": skill.name,
+                "description": skill.description or "",
+                "logo_url": skill.logo_url or "",
+                "star_count": starred_users.count(),
+                "is_starred": is_starred,
+                "starred_by_names": starred_by_names,
+            }
+        })
+    return JsonResponse(data,safe=False)
 
 def show_skills(request):
-    """
-    Render the main skills page by first fetching the JSON data via get_skills_json,
-    deserializing it back into Django model instances, and passing it to the template.
-    """
-    json_response = get_skills_json(request)
-
-    skills_deserialized = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    skills = [s.object for s in skills_deserialized]
-    title_query = request.GET.get("name", "").strip()
+    name_query = request.GET.get("name","").strip()
     is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
-        "skill_list": skills,
-        "title_query": title_query,
+        "title_query": name_query,
         "is_editor": is_editor,
+        "form": SkillForm(),
     }
     return render(request, "skills.html", context)
+
+# creating a new function : create_skill_ajax to suffice the project to send forms from model using fetch()
+@require_POST
+def create_skill_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message":"Only portofolio owner may create skill."}, status=403
+        )
+
+    form = SkillForm(request.POST)
+    if form.is_valid():
+        skill = form.save()
+        return JsonResponse(
+            {"message":"Skill added successfully.","pk":str(skill.id)}, status=201
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def create_skill(request):
