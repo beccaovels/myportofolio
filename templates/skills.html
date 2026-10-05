@@ -49,22 +49,18 @@
         </div>
     </section>
 </main>
+
 {% if user.is_superuser %}
     {% include "components/skill_form_modal.html" %}
 {% endif %}
-
 <script>
     // Configuration
     const BASE_SKILLS_ENDPOINT = "{% url 'main:get_skills_json' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
-    const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
+    const IS_EDITOR = "{{ user.is_editor|yesno:'true,false' }}" === "true"; 
     let skillsAbortController;
-
-    function closeSkillModal() {
-        const modal = document.getElementById("add-skill-modal");
-        if (modal) modal.hidePopover();
-    }
-
+    let searchDebounceTimer;
+    const SEARCH_DEBOUNCE_DELAY = 300;
     // DOM Elements
     const loadingState = document.getElementById('loading');
     const errorState = document.getElementById('error');
@@ -72,18 +68,21 @@
     const gridContainer = document.getElementById('grid');
     const searchForm = document.getElementById('skill-search-form');
     const searchInput = document.getElementById('search-input');
-
-    const SEARCH_DEBOUNCE_DELAY = 300;
-    let searchDebounceTimer;
-
+    // Utility: Show/Hide Sections
     function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
         loadingState.classList.toggle('hide', !showLoading);
         errorState.classList.toggle('hide', !showError);
         emptyState.classList.toggle('hide', !showEmpty);
         gridContainer.classList.toggle('hide', !showGrid);
     }
-
-    // XSS Sanitizer
+    // Modal Close Helper
+    function closeSkillModal() {
+        const modal = document.getElementById('add-skill-modal');
+        if (modal && modal.matches(':popover-open')) {
+            modal.hidePopover();
+        }
+    }
+    // Utility: XSS Escaping
     function escapeHtml(value) {
         return String(value ?? '')
             .replaceAll('&', '&amp;')
@@ -92,33 +91,27 @@
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#39;');
     }
-
     // Builder untuk Skill Card
     function buildSkillCardElement(item) {
         const skill = item.fields;
         const skillId = item.pk;
-
         // Container utama Card
         const cardButton = document.createElement('button');
         cardButton.type = 'button';
         cardButton.className = 'skill-card';
         cardButton.setAttribute('popovertarget', `skill-details-${skillId}`);
-
         // Logo Image / Placeholder
         const logoHtml = skill.logo_url
             ? `<img src="${escapeHtml(skill.logo_url)}" alt="${escapeHtml(skill.name)} Logo" class="skill-logo">`
             : `<div class="skill-logo-placeholder"></div>`;
-
         cardButton.innerHTML = `
             <div class="skill-logo-container">${logoHtml}</div>
             <h3 class="skill-name">${escapeHtml(skill.name)}</h3>
         `;
-
         // URL Edit, Delete & Star
         const updateUrl = "{% url 'main:update_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
         const deleteUrl = "{% url 'main:delete_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
         const starUrl = "{% url 'main:toggle_skill_star' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
-
         // Action Edit / Delete
         const actionsHtml = [];
         if (IS_SUPERUSER || IS_EDITOR) {
@@ -132,12 +125,10 @@
                 </form>
             `);
         }
-
         // Starred Logic
         const isStarredClass = skill.is_starred ? " is-starred" : "";
         const starIcon = skill.is_starred ? "★" : "☆";
         const starTitle = skill.star_count > 0 ? `Starred by ${escapeHtml(skill.starred_by_names)}` : "Be the first to star";
-
         const starFormHtml = `
             <form method="post" action="${starUrl}" class="star-form" style="display:inline;">
                 {% csrf_token %}
@@ -147,13 +138,11 @@
                 </button>
             </form>
         `;
-
        
         const popoverDiv = document.createElement('div');
         popoverDiv.id = `skill-details-${skillId}`;
         popoverDiv.className = 'skill-popover';
         popoverDiv.setAttribute('popover', 'auto');
-
         popoverDiv.innerHTML = `
             <div class="skill-popover-top-bar" style="display:flex; justify-content:space-between; align-items: center; width: 100%;">
                 ${starFormHtml}
@@ -168,20 +157,16 @@
                 ${actionsHtml.join('')}
             </div>
         `;
-
         
         const fragment = document.createDocumentFragment();
         fragment.appendChild(cardButton);
         fragment.appendChild(popoverDiv);
-
         return fragment;
     }
-
     // Fetch Skills
     async function fetchSkills(searchQuery = "") {
         if (skillsAbortController) skillsAbortController.abort();
         skillsAbortController = new AbortController();
-
         try {
             displayPageSection({ showLoading: true });
             const url = searchQuery ? `${BASE_SKILLS_ENDPOINT}?name=${encodeURIComponent(searchQuery)}` : BASE_SKILLS_ENDPOINT;
@@ -203,23 +188,19 @@
             displayPageSection({ showError: true });
         }
     }
-
     // Debounced Search Event
     searchInput.addEventListener("input", function () {
         clearTimeout(searchDebounceTimer);
         searchDebounceTimer = setTimeout(() => fetchSkills(searchInput.value.trim()), SEARCH_DEBOUNCE_DELAY);
     });
-
     searchForm.addEventListener("submit", function (e) {
         e.preventDefault();
         clearTimeout(searchDebounceTimer);
         fetchSkills(searchInput.value.trim());
     });
-
     // Add Skill Modal AJAX POST
     const CREATE_SKILL_ENDPOINT = "{% url 'main:create_skill_ajax' %}";
     const skillForm = document.getElementById('skill-form');
-
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -234,12 +215,10 @@
         }
         return cookieValue;
     }
-
     async function addSkill(event) {
         event.preventDefault();
         const submitButton = skillForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
-
         try {
             const response = await fetch(CREATE_SKILL_ENDPOINT, {
                 method: 'POST',
@@ -247,7 +226,6 @@
                 body: new FormData(skillForm),
             });
             const result = await response.json().catch(() => ({}));
-
             if (response.ok) {
                 skillForm.reset();
                 closeSkillModal();
@@ -265,9 +243,9 @@
             submitButton.disabled = false;
         }
     }
-
-    if (skillForm) skillForm.addEventListener('submit', addSkill);
-
+    if (skillForm) {
+        skillForm.addEventListener('submit', addSkill);
+    }
     // Initial Load
     fetchSkills(searchInput.value.trim());
 </script>
