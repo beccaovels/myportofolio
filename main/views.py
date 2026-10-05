@@ -239,7 +239,7 @@ def get_skills_json(request):
 
 def show_skills(request):
     name_query = request.GET.get("name","").strip()
-    is_editor = request.user.groups.filter(name="Editor").exist() if request.user.is_authenticated else False
+    is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
@@ -265,6 +265,16 @@ def create_skill_ajax(request):
         )
 
     return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
+@login_required(login_url="/login/")
+def toggle_skill_star(request, id):
+    skill = get_object_or_404(Skill, pk=id)
+    if request.method == "POST":
+        if request.user in skill.starred_by.all():
+            skill.starred_by.remove(request.user)
+        else:
+            skill.starred_by.add(request.user)
+    return redirect("main:show_skills")
 
 @login_required(login_url="/login/")
 def create_skill(request):

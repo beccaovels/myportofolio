@@ -119,12 +119,13 @@ class SkillForm(ModelForm):
                 return f"https://drive.google.com/thumbnail?id={file_id}&sz=w1000"
         return url
 
-    def clean_name_self(self):
-        name  = strip_tags(self.cleaned_data.get("name","")).strip()
+    def clean_name(self):
+        name = strip_tags(self.cleaned_data.get("name", "")).strip()
         if not name:
-            raise ValidationError("May not contain only HTML tags.")
+            raise ValidationError("Technology name can't contain only HTML tags.")
         return name
 
     def clean_description(self):
-        desc = self.cleaned.get("description", "")
-        return strip_tags(desc).strip() if desc else desc
+        description = self.cleaned_data.get("description", "")
+        return strip_tags(description).strip() if description else description
+

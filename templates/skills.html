@@ -15,73 +15,260 @@
                     <p class="section-subtitle">A visual snapshot of the tools and technologies I use across programming, web development, and workflow.</p>
                 </div>
                 {% if user.is_superuser %}
-                <a href="{% url 'main:create_skill' %}" class="btn btn-primary skill-add-button">
-                    <span aria-hidden="true">+</span>
-                    Add Skill
-                </a>
+                <button type="button" class="btn btn-primary" popovertarget="add-skill-modal">
+                    <span aria-hidden="true">+</span> Add Skill
+                </button>
                 {% endif %}
             </div>
 
             <!-- SEARCH FORM -->
-            <form method="get" action="{% url 'main:show_skills' %}" class="skill-search">
-                <input type="search" name="name" value="{{ title_query }}" placeholder="Search technologies..." class="skill-search__input" aria-label="Search technologies">
+            <form id="skill-search-form" class="skill-search">
+                <input type="search" id="search-input" name="name" value="{{ title_query }}" 
+                       placeholder="Search technologies..." class="skill-search__input" 
+                       aria-label="Search technologies">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
 
-            <div class="skills-grid">
-                {% for skill in skill_list %}
-                <!-- Card is now a button that triggers the modal -->
-                <button type="button" class="skill-card" popovertarget="skill-details-{{ skill.id }}">
-                    <div class="skill-logo-container">
-                        {% if skill.logo_url %}
-                            <img src="{{ skill.logo_url }}" alt="{{ skill.name }} Logo" class="skill-logo">
-                        {% else %}
-                            <div class="skill-logo-placeholder"></div>
-                        {% endif %}
-                    </div>
-                    <h3 class="skill-name">{{ skill.name }}</h3>
-                </button>
-
-                <!-- Skill Details Modal -->
-                <div id="skill-details-{{ skill.id }}" class="skill-popover" popover="auto">
-                    <div class="skill-popover-top-bar">
-                        <button type="button" class="skill-popover-close" popovertarget="skill-details-{{ skill.id }}">&times;</button>
-                    </div>
-                    
-                    <div class="skill-popover-header">
-                        <div class="skill-logo-container skill-logo-large">
-                            {% if skill.logo_url %}
-                                <img src="{{ skill.logo_url }}" alt="{{ skill.name }} Logo" class="skill-logo">
-                            {% else %}
-                                <div class="skill-logo-placeholder"></div>
-                            {% endif %}
-                        </div>
-                        <h2>{{ skill.name }}</h2>
-                    </div>
-                    
-                    <p class="skill-popover-desc">{{ skill.description|default:"No description provided." }}</p>
-                    
-                    <div class="skill-popover-actions">
-                        {% if user.is_superuser or is_editor %}
-                        <a href="{% url 'main:update_skill' skill.id %}" class="btn btn-secondary">Edit</a>
-                        {% endif %}
-                        {% if user.is_superuser %}
-                        <button type="button" class="btn btn-danger" popovertarget="delete-skill-{{ skill.id }}">Delete</button>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Delete Confirmation Modal (Existing) -->
-                {% include "components/skill_delete_modal.html" with skill=skill %}
-                {% empty %}
-                    {% if title_query %}
-                        <p class="empty-state">No technologies found matching your search.</p>
-                    {% else %}
-                        <p class="empty-state">No technologies have been added yet.</p>
-                    {% endif %}
-                {% endfor %}
+            <!-- Loading State -->
+            <div id="loading" class="empty-state hide">
+                <p>Loading skills...</p>
             </div>
+
+            <!-- Error State -->
+            <div id="error" class="empty-state hide">
+                <p>Failed to load skills data. Please try again.</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty" class="empty-state hide">
+                <p>No technologies have been added or found yet.</p>
+            </div>
+
+            <!-- AJAX Grid Container (Kosong di awal) -->
+            <div id="grid" class="skills-grid hide"></div>
         </div>
     </section>
 </main>
+{% if user.is_superuser %}
+    {% include "components/skill_form_modal.html" %}
+{% endif %}
+
+<script>
+    // Configuration
+    const BASE_SKILLS_ENDPOINT = "{% url 'main:get_skills_json' %}";
+    const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+    const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
+    let skillsAbortController;
+
+    function closeSkillModal() {
+        const modal = document.getElementById("add-skill-modal");
+        if (modal) modal.hidePopover();
+    }
+
+    // DOM Elements
+    const loadingState = document.getElementById('loading');
+    const errorState = document.getElementById('error');
+    const emptyState = document.getElementById('empty');
+    const gridContainer = document.getElementById('grid');
+    const searchForm = document.getElementById('skill-search-form');
+    const searchInput = document.getElementById('search-input');
+
+    const SEARCH_DEBOUNCE_DELAY = 300;
+    let searchDebounceTimer;
+
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+        loadingState.classList.toggle('hide', !showLoading);
+        errorState.classList.toggle('hide', !showError);
+        emptyState.classList.toggle('hide', !showEmpty);
+        gridContainer.classList.toggle('hide', !showGrid);
+    }
+
+    // XSS Sanitizer
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    // Builder untuk Skill Card
+    function buildSkillCardElement(item) {
+        const skill = item.fields;
+        const skillId = item.pk;
+
+        // Container utama Card
+        const cardButton = document.createElement('button');
+        cardButton.type = 'button';
+        cardButton.className = 'skill-card';
+        cardButton.setAttribute('popovertarget', `skill-details-${skillId}`);
+
+        // Logo Image / Placeholder
+        const logoHtml = skill.logo_url
+            ? `<img src="${escapeHtml(skill.logo_url)}" alt="${escapeHtml(skill.name)} Logo" class="skill-logo">`
+            : `<div class="skill-logo-placeholder"></div>`;
+
+        cardButton.innerHTML = `
+            <div class="skill-logo-container">${logoHtml}</div>
+            <h3 class="skill-name">${escapeHtml(skill.name)}</h3>
+        `;
+
+        // URL Edit, Delete & Star (Ganti 000... dengan UUID asli)
+        const updateUrl = "{% url 'main:update_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
+        const deleteUrl = "{% url 'main:delete_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
+        const starUrl = "{% url 'main:toggle_skill_star' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
+
+        // Akses Action Edit / Delete
+        const actionsHtml = [];
+        if (IS_SUPERUSER || IS_EDITOR) {
+            actionsHtml.push(`<a href="${updateUrl}" class="btn btn-secondary">Edit</a>`);
+        }
+        if (IS_SUPERUSER) {
+            actionsHtml.push(`
+                <form method="post" action="${deleteUrl}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete ${escapeHtml(skill.name)}?');">Delete</button>
+                </form>
+            `);
+        }
+
+        // Bintang (Star Logic)
+        const isStarredClass = skill.is_starred ? " is-starred" : "";
+        const starIcon = skill.is_starred ? "★" : "☆";
+        const starTitle = skill.star_count > 0 ? `Starred by ${escapeHtml(skill.starred_by_names)}` : "Be the first to star";
+
+        const starFormHtml = `
+            <form method="post" action="${starUrl}" class="star-form" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="button button-star${isStarredClass}" title="${starTitle}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: none; font-size: 1.2rem; cursor: pointer;">
+                    <span aria-hidden="true" style="color: gold;">${starIcon}</span>
+                    <span class="star-count" style="font-size: 0.9rem; color: gray;">${skill.star_count}</span>
+                </button>
+            </form>
+        `;
+
+        // Wrapper pembungkus popover untuk detail skill ini
+        const popoverDiv = document.createElement('div');
+        popoverDiv.id = `skill-details-${skillId}`;
+        popoverDiv.className = 'skill-popover';
+        popoverDiv.setAttribute('popover', 'auto');
+
+        popoverDiv.innerHTML = `
+            <div class="skill-popover-top-bar" style="display:flex; justify-content:space-between; align-items: center; width: 100%;">
+                ${starFormHtml}
+                <button type="button" class="skill-popover-close" popovertarget="skill-details-${skillId}">&times;</button>
+            </div>
+            <div class="skill-popover-header">
+                <div class="skill-logo-container skill-logo-large">${logoHtml}</div>
+                <h2>${escapeHtml(skill.name)}</h2>
+            </div>
+            <p class="skill-popover-desc">${escapeHtml(skill.description) || "No description provided."}</p>
+            <div class="skill-popover-actions">
+                ${actionsHtml.join('')}
+            </div>
+        `;
+
+        // Bungkus jadi satu node fragment agar keduanya tersisip
+        const fragment = document.createDocumentFragment();
+        fragment.appendChild(cardButton);
+        fragment.appendChild(popoverDiv);
+
+        return fragment;
+    }
+
+    // Fetch Skills
+    async function fetchSkills(searchQuery = "") {
+        if (skillsAbortController) skillsAbortController.abort();
+        skillsAbortController = new AbortController();
+
+        try {
+            displayPageSection({ showLoading: true });
+            const url = searchQuery ? `${BASE_SKILLS_ENDPOINT}?name=${encodeURIComponent(searchQuery)}` : BASE_SKILLS_ENDPOINT;
+            
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' }, signal: skillsAbortController.signal });
+            if (!response.ok) throw new Error('Failed to fetch data');
+            
+            const data = await response.json();
+            if (data.length === 0) {
+                displayPageSection({ showEmpty: true });
+            } else {
+                gridContainer.innerHTML = '';
+                data.forEach(item => gridContainer.appendChild(buildSkillCardElement(item)));
+                displayPageSection({ showGrid: true });
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') return;
+            console.error(error);
+            displayPageSection({ showError: true });
+        }
+    }
+
+    // Debounced Search Event
+    searchInput.addEventListener("input", function () {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => fetchSkills(searchInput.value.trim()), SEARCH_DEBOUNCE_DELAY);
+    });
+
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        fetchSkills(searchInput.value.trim());
+    });
+
+    // Add Skill Modal AJAX POST
+    const CREATE_SKILL_ENDPOINT = "{% url 'main:create_skill_ajax' %}";
+    const skillForm = document.getElementById('skill-form');
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    async function addSkill(event) {
+        event.preventDefault();
+        const submitButton = skillForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+            const response = await fetch(CREATE_SKILL_ENDPOINT, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                body: new FormData(skillForm),
+            });
+            const result = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+                skillForm.reset();
+                closeSkillModal();
+                if (typeof showToast !== 'undefined') showToast('Success', 'New skill added successfully!', 'success');
+                fetchSkills(searchInput.value.trim());
+            } else {
+                const errorMessages = result.errors
+                    ? Object.values(result.errors).flat().map(err => err.message)
+                    : [result.message || `Error (status ${response.status}).`];
+                if (typeof showToast !== 'undefined') showToast('Failed to add skill', errorMessages.join(' '), 'error');
+            }
+        } catch (error) {
+            if (typeof showToast !== 'undefined') showToast('Failed to add skill', 'Could not reach the server.', 'error');
+        } finally {
+            submitButton.disabled = false;
+        }
+    }
+
+    if (skillForm) skillForm.addEventListener('submit', addSkill);
+
+    // Initial Load
+    fetchSkills(searchInput.value.trim());
+</script>
 {% endblock content %}
