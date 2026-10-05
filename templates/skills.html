@@ -44,7 +44,7 @@
                 <p>No technologies have been added or found yet.</p>
             </div>
 
-            <!-- AJAX Grid Container (Kosong di awal) -->
+            <!-- AJAX Grid Container -->
             <div id="grid" class="skills-grid hide"></div>
         </div>
     </section>
@@ -114,12 +114,12 @@
             <h3 class="skill-name">${escapeHtml(skill.name)}</h3>
         `;
 
-        // URL Edit, Delete & Star (Ganti 000... dengan UUID asli)
+        // URL Edit, Delete & Star
         const updateUrl = "{% url 'main:update_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
         const deleteUrl = "{% url 'main:delete_skill' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
         const starUrl = "{% url 'main:toggle_skill_star' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', skillId);
 
-        // Akses Action Edit / Delete
+        // Action Edit / Delete
         const actionsHtml = [];
         if (IS_SUPERUSER || IS_EDITOR) {
             actionsHtml.push(`<a href="${updateUrl}" class="btn btn-secondary">Edit</a>`);
@@ -133,7 +133,7 @@
             `);
         }
 
-        // Bintang (Star Logic)
+        // Starred Logic
         const isStarredClass = skill.is_starred ? " is-starred" : "";
         const starIcon = skill.is_starred ? "★" : "☆";
         const starTitle = skill.star_count > 0 ? `Starred by ${escapeHtml(skill.starred_by_names)}` : "Be the first to star";
@@ -148,7 +148,7 @@
             </form>
         `;
 
-        // Wrapper pembungkus popover untuk detail skill ini
+       
         const popoverDiv = document.createElement('div');
         popoverDiv.id = `skill-details-${skillId}`;
         popoverDiv.className = 'skill-popover';
@@ -169,7 +169,7 @@
             </div>
         `;
 
-        // Bungkus jadi satu node fragment agar keduanya tersisip
+        
         const fragment = document.createDocumentFragment();
         fragment.appendChild(cardButton);
         fragment.appendChild(popoverDiv);
