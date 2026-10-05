@@ -146,7 +146,7 @@ def show_experience(request):
     is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
-        "name": "Rebecca Love Lianov SImanjuntak",
+        "name": "Rebecca Love Lianov Simanjuntak",
         "title_query": title_query,
         "is_editor": is_editor,
         "form" : ExperienceForm(),
@@ -238,25 +238,14 @@ def get_skills_json(request):
     return JsonResponse(data,safe=False)
 
 def show_skills(request):
-    """
-    Render the main skills page by first fetching the JSON data via get_skills_json,
-    deserializing it back into Django model instances, and passing it to the template.
-    """
-    json_response = get_skills_json(request)
-
-    skills_deserialized = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    skills = [s.object for s in skills_deserialized]
-    title_query = request.GET.get("name", "").strip()
-    is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
+    name_query = request.GET.get("name","").strip()
+    is_editor = request.user.groups.filter(name="Editor").exist() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
-        "skill_list": skills,
-        "title_query": title_query,
+        "title_query": name_query,
         "is_editor": is_editor,
+        "form": SkillForm(),
     }
     return render(request, "skills.html", context)
 
