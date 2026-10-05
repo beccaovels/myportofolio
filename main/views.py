@@ -239,7 +239,7 @@ def get_skills_json(request):
 
 def show_skills(request):
     name_query = request.GET.get("name","").strip()
-    is_editor = request.user.groups.filter(name="Editor").exist() if request.user.is_authenticated else False
+    is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
 
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
