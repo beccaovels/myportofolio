@@ -249,6 +249,23 @@ def show_skills(request):
     }
     return render(request, "skills.html", context)
 
+# creating a new function : create_skill_ajax to suffice the project to send form s from model using fetch()
+@require_POST
+def create_skill_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message":"Only portofolio owner may create skill."}, status=403
+        )
+
+    form = SkillForm(request.POST)
+    if form.is_valid():
+        skill = form.save()
+        return JsonResponse(
+            {"message":"Skill added successfully.","pk":str(skill.id)}, status=201
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
 @login_required(login_url="/login/")
 def create_skill(request):
     """
