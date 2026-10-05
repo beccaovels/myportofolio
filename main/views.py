@@ -153,6 +153,17 @@ def show_experience(request):
     }
     return render(request, "experience.html", context)
 
+# function for starring feature exclusively for starred skills
+@login_required(login_url="/login")
+def toggle_skill_star(request,id):
+    skill = get_object_or_404(Skill, pk=id)
+    if request.method == "POST":
+        if request.user in skill.starred_by.all():
+            skill.starred_by.remove(request.user)
+        else:
+            skill.starred_by.add(request.user)
+    return redirect("main:show_skills")
+
 @login_required(login_url="/login/")
 def toggle_star(request, project_id):
     project = get_object_or_404(Experience, pk=project_id)
@@ -249,7 +260,7 @@ def show_skills(request):
     }
     return render(request, "skills.html", context)
 
-# creating a new function : create_skill_ajax to suffice the project to send form s from model using fetch()
+# creating a new function : create_skill_ajax to suffice the project to send forms from model using fetch()
 @require_POST
 def create_skill_ajax(request):
     if not request.user.is_superuser:
