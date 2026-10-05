@@ -1,26 +1,9 @@
-<div id="add-skill-modal"
-     class="project-form-modal"
-     popover="auto"
-     role="dialog"
-     aria-modal="true"
-     aria-labelledby="add-skill-modal-title">
-    <button type="button"
-            class="project-form-modal__backdrop"
-            popovertarget="add-skill-modal"
-            popovertargetaction="hide"
-            aria-label="Close add skill form"></button>
-
+<div id="add-skill-modal" class="project-form-modal" popover="auto" role="dialog" aria-modal="true"aria-labelledby="add-skill-modal-title">
+    <button type="button" class="project-form-modal__backdrop" popovertarget="add-skill-modal" popovertargetaction="hide"aria-label="Close add skill form"></button>
     <div class="project-form-modal__content">
-        <button type="button"
-                class="project-form-modal__close"
-                popovertarget="add-skill-modal"
-                popovertargetaction="hide"
-                aria-label="Close add skill form">&times;</button>
-
+        <button type="button" class="project-form-modal__close" popovertarget="add-skill-modal" popovertargetaction="hide" aria-label="Close add skill form">&times;</button>
         <h2 id="add-skill-modal-title">Add a New Skill</h2>
-        <form id="skill-form"
-              method="post"
-              action="{% url 'main:create_skill' %}">
+        <form id="skill-form" method="post" action="{% url 'main:create_skill' %}">
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group">
@@ -31,11 +14,8 @@
                     {% endfor %}
                 </div>
             {% endfor %}
-            <div class="project-form-modal__actions" style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1rem;">
-                <button type="button"
-                        class="button button-secondary"
-                        popovertarget="add-skill-modal"
-                        popovertargetaction="hide">Cancel</button>
+            <div class="project-form-modal__actions">
+                <button type="button" class="button button-secondary" popovertarget="add-skill-modal" popovertargetaction="hide">Cancel</button>
                 <button type="submit" class="button">Add Skill</button>
             </div>
         </form>
