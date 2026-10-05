@@ -275,3 +275,34 @@ The debugging process highlighted a key limitation in how AI understands applica
 
 **Prompting/chat log:**
 Full conversation log available at: https://share.gemini.google/iAA4f3RIwVYO
+
+## Assignment 5
+### Reflective Questions
+1.Debouncing is a programming practice used to ensure that a function does not fire too frequently. It works by delaying the execution of the function until a certain amount of time has passed since the last time it was invoked. In an AJAX-based search feature, if a user types "Django", an application without debouncing would send a separate network request to the server for every single keystroke ("D", "Dj", "Dja", etc.). This spams the backend database with useless queries and wastes bandwidth. By implementing debouncing (e.g., a 300ms delay), the application waits until the user pauses typing before sending a single, final AJAX request, vastly improving server performance and frontend efficiency.
+
+2. The fetch() API in JavaScript is asynchronous; it starts the network request in the background and allows the rest of your script to keep running while it waits for a response. The purpose of await is to pause the execution of that specific asynchronous function until the Promise resolves (i.e., until the server actually replies with the data). If we did not use await, JavaScript would instantly move to the next line of code before the HTTP request finished. Any variable meant to hold the server's response would instead hold a pending Promise object. Consequently, any subsequent code attempting to parse the JSON or update the UI would fail or throw errors because the data hasn't actually arrived yet.
+
+3. Cross-Site Scripting (XSS) is a security vulnerability where an attacker injects malicious client-side scripts (like JavaScript) into web pages viewed by other users. This usually happens when an application takes untrusted user input (e.g., typing <script>alert('Hacked')</script> into a form) and renders it directly on the page. When other users load that page, their browser executes the malicious script. Data displayed via AJAX/JavaScript is highly vulnerable because developers frequently use DOM properties like innerHTML to dynamically inject the server's JSON response into the page. If that JSON contains malicious scripts and is injected via innerHTML, the browser will execute it. On the other hand, Django templates are safer by default because Django automatically escapes all template variables (converting characters like < into safe HTML entities like &lt;). When using AJAX, we lose Django's built-in frontend escaping, forcing us to manually sanitize the data in JavaScript before rendering it.
+
+### AI Disclosure
+
+**Tool used:** Gemini Pro 3.1 - High(Google)
+
+**What it was used for:**
+- Implementing AJAX-based asynchronous form submissions (POST) using the Fetch API to add new skills without page reloads.
+- Creating a debounced asynchronous search function (GET) to filter skills in real-time.
+- Implementing an HTML5 Popover modal for the skill creation form.
+- Adding Toast notifications for successful creations and error handling.
+- Securing the inputs against Cross-Site Scripting (XSS) using DOM manipulation (innerHTML vs textContent and manual escaping).
+
+**Prompting strategy:**
+For this assignment, I employed a conversational and iterative prompting style. Instead of providing a massive, rigid block of technical requirements upfront, I prefer to start with a broad request (e.g., "help me add an AJAX modal") and then refine the output through back-and-forth dialogue. I communicate with the AI casually, as if talking to a peer, allowing me to quickly relay feedback on visual discrepancies or server errors as I test them in real-time. This iterative approach is highly effective for catching AI hallucinations—such as incorrect Django syntax or mismatched CSS classes—step-by-step. By breaking the development process into smaller, conversational chunks, I can easily pinpoint exactly where the AI lost context of my specific codebase and guide it back on track.
+
+**What I changed or fixed manually (What advice I took vs rejected):**
+I accepted the AI's core logic for the JavaScript Fetch API, specifically the implementation of the AbortController for handling race conditions in debounced search requests. However, I manually intervened when the AI generated incorrect Django QuerySet syntax (hallucinating .exist() instead of .exists()) and form validation methods (self.cleaned instead of self.cleaned_data). Additionally, I had to manually fix the UI; the AI assumed the modal used a generic .skill-popover CSS class and provided styling for that, but I had to manually adapt and map those styles to my existing .experience-form-modal class structure to maintain the glassmorphic theme of my site.
+
+**Critical reflection on AI limitations:**
+This process heavily exposed the AI's "context blindness" and tendency to hallucinate framework-specific syntax. Because the AI didn't have my entire CSS stylesheet memorized, it invented default user-agent styles (like the beige background on inputs) and guessed incorrect class names, resulting in an unstyled modal. Furthermore, the AI generated slightly inaccurate Django ORM methods (e.g., .exist()), which caused 500 Internal Server Errors on the backend. This proves that while AI can generate structurally sound logic for frontend asynchronous requests, its output cannot be blindly copy-pasted without deep manual verification of framework syntax and CSS inheritance.
+
+**Prompting/chat log:**
+Full conversation log available at: https://share.gemini.google/V6flHAC7Mb2p
