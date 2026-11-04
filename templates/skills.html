@@ -57,7 +57,7 @@
     // Configuration
     const BASE_SKILLS_ENDPOINT = "{% url 'main:get_skills_json' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
-    const IS_EDITOR = "{{ user.is_editor|yesno:'true,false' }}" === "true"; 
+    const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
     let skillsAbortController;
     let searchDebounceTimer;
     const SEARCH_DEBOUNCE_DELAY = 300;
