@@ -1,17 +1,12 @@
-from django.shortcuts import render
 from main.forms import ExperienceForm, SkillForm
 from main.models import Experience, Education, Skill
 from django.contrib import messages
-from django.core import serializers
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 import datetime
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
 
 def show_main(request):
     last_login = request.COOKIES.get('last_login', 'No active login session / Cookie not found')
@@ -68,7 +63,6 @@ def logout_user(request):
     return response
 
 
-
 def show_education(request):
     context = {
         "name": "Rebecca Love Lianov Simanjuntak",
@@ -93,53 +87,6 @@ def create_experience(request):
         "form": form,
     }
     return render(request, "experience_form.html", context)
-
-@require_POST
-def create_experience_ajax(request):
-    if not request.user.is_superuser:
-        return JsonResponse(
-            {"message": "Only the portfolio owner can add experiences."},
-            status=403,
-        )
-    
-    form = ExperienceForm(request.POST)
-    if form.is_valid():
-        experience = form.save()
-        return JsonResponse(
-            {"message": "Experience added successfully.", "pk": str(experience.id)},
-            status=201,
-        )
-    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
-
-def get_experience_json(request):
-    title_query = request.GET.get("title", "").strip()
-    experiences = Experience.objects.prefetch_related('starred_by').all()
-
-    if title_query:
-        experiences = experiences.filter(title__icontains=title_query)
-
-    # Manually build the JSON data so we can add the Star logic
-    data = []
-    for experience in experiences:
-        starred_users = experience.starred_by.all()
-        is_starred = request.user in starred_users if request.user.is_authenticated else False
-        starred_by_names = ", ".join([u.username for u in starred_users])
-
-        data.append({
-            "pk": str(experience.id),
-            "fields": {
-                "title": experience.title,
-                "description": experience.description,
-                "tech_stack": experience.category,
-                "project_url": "",
-                "project_image_url": "",
-                "star_count": starred_users.count(),
-                "is_starred": is_starred,
-                "starred_by_names": starred_by_names,
-            }
-        })
-
-    return JsonResponse(data, safe=False)
 
 def show_experience(request):
     title_query = request.GET.get("title", "").strip()
@@ -211,32 +158,6 @@ def delete_experience(request, project_id):
     return redirect("main:show_experience")
 
 
-def get_skills_json(request):
-    name_query = request.GET.get("name", "").strip()
-    skills = Skill.objects.prefetch_related("starred_by").all()
-
-    if name_query:
-        skills = skills.filter(name__icontains=name_query)
-
-    data = []
-    for skill in skills:
-        starred_users = skill.starred_by.all()
-        is_starred = request.user in starred_users if request.user.is_authenticated else False
-        starred_by_names = ",".join([u.username for u in starred_users])
-
-        data.append({
-            "pk": str(skill.id),
-            "fields": {
-                "name": skill.name,
-                "description": skill.description or "",
-                "logo_url": skill.logo_url or "",
-                "star_count": starred_users.count(),
-                "is_starred": is_starred,
-                "starred_by_names": starred_by_names,
-            }
-        })
-    return JsonResponse(data,safe=False)
-
 def show_skills(request):
     name_query = request.GET.get("name","").strip()
     is_editor = request.user.groups.filter(name="Editor").exists() if request.user.is_authenticated else False
@@ -248,23 +169,6 @@ def show_skills(request):
         "form": SkillForm(),
     }
     return render(request, "skills.html", context)
-
-# creating a new function : create_skill_ajax to suffice the project to send forms from model using fetch()
-@require_POST
-def create_skill_ajax(request):
-    if not request.user.is_superuser:
-        return JsonResponse(
-            {"message":"Only portofolio owner may create skill."}, status=403
-        )
-
-    form = SkillForm(request.POST)
-    if form.is_valid():
-        skill = form.save()
-        return JsonResponse(
-            {"message":"Skill added successfully.","pk":str(skill.id)}, status=201
-        )
-
-    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 @login_required(login_url="/login/")
 def create_skill(request):

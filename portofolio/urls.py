@@ -22,6 +22,13 @@ urlpatterns = [
     path("", include("main.urls")),
 ]
 
+# REST API (Tutorial 7). "v1" is our contract label, not DRF versioning.
+# api-auth/ adds login/logout links to the Browsable API.
+urlpatterns += [
+    path("api/v1/", include("main.api_urls")),
+    path("api-auth/", include("rest_framework.urls")),
+]
+
 # [0]' ' -> indicates localhost:8000/ (init.) 
 # [1] landing_page -> indicates django to run that funct. when in (init. location)
 # [2] name='landing_page' -> nickname to refer to
