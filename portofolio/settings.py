@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "main",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -157,5 +158,6 @@ MAILERS = {
 }
 
 # IMPLEMENTING THE FORM w/ CSRF TOKEN
-# use https:// to trail the URL
-CSRF_TRUSTED_ORIGINS = ["https://rebecca-love-myportofolio.pws.cs.ui.ac.id/"]
+# Origins are scheme + host only (no trailing slash), otherwise Django's
+# origin check never matches and HTTPS writes fail with 403.
+CSRF_TRUSTED_ORIGINS = ["https://rebecca-love-myportofolio.pws.cs.ui.ac.id"]
