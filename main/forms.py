@@ -1,9 +1,9 @@
-import re
 from django import forms
 from django.forms.models import ModelForm
 from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from main.models import Experience, Skill
+from main.utils import normalize_drive_image_url
 
 
 class ExperienceForm(ModelForm):
@@ -110,14 +110,7 @@ class SkillForm(ModelForm):
         }
 
     def clean_logo_url(self):
-        url = self.cleaned_data.get('logo_url')
-        if url and 'drive.google.com/file/d/' in url:
-            # Automatically convert Google Drive 'view' links to raw image 'thumbnail' links
-            match = re.search(r'/d/([a-zA-Z0-9_-]+)', url)
-            if match:
-                file_id = match.group(1)
-                return f"https://drive.google.com/thumbnail?id={file_id}&sz=w1000"
-        return url
+        return normalize_drive_image_url(self.cleaned_data.get('logo_url'))
 
     def clean_name(self):
         name  = strip_tags(self.cleaned_data.get("name","")).strip()
