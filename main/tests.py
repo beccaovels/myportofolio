@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -6,12 +7,18 @@ from main.models import Experience, Education
 
 
 class MainTest(TestCase):
+    """Since Tutorial 5/7 the Experience page is an AJAX shell: the HTML has no
+    cards, and the data comes from /api/v1/experience/. These tests keep their
+    original intent but check each part where it now lives."""
+
     def setUp(self):
         self.experience = Experience.objects.create(
             title="PBP Teaching Assistant",
             description="Help students understand web development.",
             category="part-time",
+            started_at=timezone.now(),
         )
+        self.api_url = reverse("api:experience-list")
 
     def test_main_url_is_accessible(self):
         response = self.client.get(reverse("main:show_main"))
@@ -36,26 +43,51 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "experience.html")
-        self.assertContains(response, self.experience.title)
-        self.assertContains(response, self.experience.description)
-        self.assertContains(response, "Part-Time")
-        self.assertContains(response, "Ongoing")
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
+        # The page loads its cards from the DRF endpoint...
+        self.assertContains(response, self.api_url)
+        self.assertContains(response, 'id="grid"')
+        # ...which returns the experience data (ongoing = no end date).
+        item = self.client.get(self.api_url).json()[0]
+        self.assertEqual(item["title"], self.experience.title)
+        self.assertEqual(item["description"], self.experience.description)
+        self.assertEqual(item["category"], "part-time")
+        self.assertIsNone(item["ended_at"])
 
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
         response = self.client.get(reverse("main:show_experience"))
 
-        self.assertContains(response, "No experience has been added yet.")
+        self.assertContains(response, "No experiences have been added or found yet.")
+        self.assertEqual(self.client.get(self.api_url).json(), [])
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
         self.experience.save()
-        response = self.client.get(reverse("main:show_experience"))
 
         self.assertFalse(self.experience.is_ongoing)
-        self.assertContains(response, "Completed")
-        self.assertNotContains(response, "Ongoing")
+        item = self.client.get(self.api_url).json()[0]
+        self.assertIsNotNone(item["ended_at"])
+
+
+class SkillsPageTest(TestCase):
+    """Regression: the template used to read user.is_editor (which doesn't
+    exist), so Editors never saw the Edit button."""
+
+    def test_editor_flag_reaches_the_page_script(self):
+        editor = User.objects.create_user(username="editor")
+        editor.groups.add(Group.objects.create(name="Editor"))
+        self.client.force_login(editor)
+        response = self.client.get(reverse("main:show_skills"))
+
+        self.assertContains(response, 'const IS_EDITOR = "true" === "true";')
+        self.assertContains(response, reverse("api:skill-list"))
+
+    def test_regular_user_is_not_editor(self):
+        self.client.force_login(User.objects.create_user(username="regular"))
+        response = self.client.get(reverse("main:show_skills"))
+
+        self.assertContains(response, 'const IS_EDITOR = "false" === "true";')
 
 
 class EducationTest(TestCase):
