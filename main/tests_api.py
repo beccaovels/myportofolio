@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
@@ -301,6 +302,53 @@ class SkillAPITest(APITestCase):
         self.client.force_authenticate(user=self.owner)
         self.assertEqual(self.client.delete(self.list_url).status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual(self.client.get(self.star_url).status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    # --- ?ordering= (extra feature) ------------------------------------------
+
+    def _make_ordering_fixture(self):
+        """Python (oldest, 0 stars) < go (2 stars) < Zig (newest, 1 star).
+
+        created_at is set explicitly: auto_now_add values can tie on fast
+        machines, which would make "newest" flaky.
+        """
+        base = timezone.now()
+        go = Skill.objects.create(name="go")
+        zig = Skill.objects.create(name="Zig")
+        for skill, days in ((self.skill, 0), (go, 1), (zig, 2)):
+            Skill.objects.filter(pk=skill.pk).update(created_at=base + timedelta(days=days))
+        go.starred_by.add(self.user, self.editor)
+        zig.starred_by.add(self.user)
+
+    def _names(self, params):
+        response = self.client.get(self.list_url, params)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        return [item["name"] for item in response.data]
+
+    def test_ordering_defaults_to_newest(self):
+        self._make_ordering_fixture()
+        self.assertEqual(self._names({}), ["Zig", "go", "Python"])
+        self.assertEqual(self._names({"ordering": "newest"}), ["Zig", "go", "Python"])
+
+    def test_ordering_by_name_is_case_insensitive(self):
+        self._make_ordering_fixture()
+        self.assertEqual(self._names({"ordering": "name"}), ["go", "Python", "Zig"])
+
+    def test_ordering_by_stars(self):
+        self._make_ordering_fixture()
+        self.assertEqual(self._names({"ordering": "stars"}), ["go", "Zig", "Python"])
+        # Annotating the count must not change the serializer's star_count.
+        top = self.client.get(self.list_url, {"ordering": "stars"}).data[0]
+        self.assertEqual(top["star_count"], 2)
+
+    def test_ordering_combines_with_search(self):
+        self._make_ordering_fixture()
+        self.assertEqual(self._names({"name": "o", "ordering": "stars"}), ["go", "Python"])
+
+    def test_unknown_ordering_is_rejected(self):
+        for value in ("bogus", "-created_at", "starred_by__email"):
+            response = self.client.get(self.list_url, {"ordering": value})
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn("ordering", response.data)
 
     # --- Real session + CSRF -------------------------------------------------
     # force_authenticate skips both login and CSRF, so these tests log in
