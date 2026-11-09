@@ -1,9 +1,12 @@
+from django.db.models import Count
+from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import (
     api_view, authentication_classes, permission_classes,
 )
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -81,6 +84,26 @@ def _skill_queryset():
     return Skill.objects.prefetch_related("starred_by").order_by("-created_at", "id")
 
 
+# Whitelist for ?ordering= on the Skill list. Only these keys are accepted, so
+# a client can never order by an arbitrary (or sensitive) column. Every option
+# ends with a unique tie-breaker so the order is stable between requests.
+SKILL_ORDERINGS = {
+    "newest": ("-created_at", "id"),
+    "name": (Lower("name").asc(), "-created_at", "id"),
+    "stars": ("-star_total", "-created_at", "id"),
+}
+DEFAULT_SKILL_ORDERING = "newest"
+
+
+def _order_skills(skills, ordering):
+    if ordering not in SKILL_ORDERINGS:
+        # DRF turns this into 400 {"ordering": ["..."]}, like a serializer error.
+        raise ValidationError({"ordering": [f"Choose one of: {', '.join(SKILL_ORDERINGS)}."]})
+    if ordering == "stars":
+        skills = skills.annotate(star_total=Count("starred_by", distinct=True))
+    return skills.order_by(*SKILL_ORDERINGS[ordering])
+
+
 @api_view(["GET", "HEAD", "POST"])
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
@@ -90,6 +113,8 @@ def skill_list(request):
         name = request.query_params.get("name", "").strip()
         if name:
             skills = skills.filter(name__icontains=name)
+        ordering = request.query_params.get("ordering", "").strip() or DEFAULT_SKILL_ORDERING
+        skills = _order_skills(skills, ordering)
         serializer = SkillSerializer(skills, many=True, context={"request": request})
         return Response(serializer.data)
 

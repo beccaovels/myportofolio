@@ -89,6 +89,36 @@ class SkillsPageTest(TestCase):
 
         self.assertContains(response, 'const IS_EDITOR = "false" === "true";')
 
+    def test_edit_modal_is_rendered_for_editor_and_owner_only(self):
+        # Assignment 6: the owner and Editors edit through the PATCH modal.
+        editor = User.objects.create_user(username="editor")
+        editor.groups.add(Group.objects.create(name="Editor"))
+        owner = User.objects.create_superuser(username="owner", password=None)
+        for user, has_modal in ((editor, True), (owner, True),
+                                (User.objects.create_user(username="regular"), False)):
+            self.client.force_login(user)
+            response = self.client.get(reverse("main:show_skills"))
+            if has_modal:
+                self.assertContains(response, 'id="skill-form"')
+            else:
+                self.assertNotContains(response, 'id="skill-form"')
+        self.client.logout()
+        self.assertNotContains(self.client.get(reverse("main:show_skills")), 'id="skill-form"')
+
+    def test_add_button_is_owner_only(self):
+        editor = User.objects.create_user(username="editor")
+        editor.groups.add(Group.objects.create(name="Editor"))
+        self.client.force_login(editor)
+        self.assertNotContains(self.client.get(reverse("main:show_skills")), 'id="add-skill-button"')
+
+        self.client.force_login(User.objects.create_superuser(username="owner", password=None))
+        self.assertContains(self.client.get(reverse("main:show_skills")), 'id="add-skill-button"')
+
+    def test_sort_control_offers_the_api_orderings(self):
+        response = self.client.get(reverse("main:show_skills"))
+        for value in ("newest", "name", "stars"):
+            self.assertContains(response, f'<option value="{value}">')
+
 
 class EducationTest(TestCase):
     def setUp(self):

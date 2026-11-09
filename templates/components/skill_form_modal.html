@@ -1,9 +1,12 @@
-<div id="add-skill-modal" class="experience-form-modal" popover="auto" role="dialog" aria-modal="true" aria-labelledby="add-skill-modal-title">
-    <button type="button" class="experience-form-modal__backdrop" popovertarget="add-skill-modal" popovertargetaction="hide" aria-label="Close add skill form"></button>
+{# Shared Add/Edit modal. skills.html switches its mode: Add sends POST to #}
+{# /api/v1/skills/, Edit sends PATCH to /api/v1/skills/<id>/. The action  #}
+{# attribute is only a no-JavaScript fallback to the HTML create view.    #}
+<div id="skill-modal" class="experience-form-modal" popover="auto" role="dialog" aria-modal="true" aria-labelledby="skill-modal-title">
+    <button type="button" class="experience-form-modal__backdrop" popovertarget="skill-modal" popovertargetaction="hide" aria-label="Close skill form"></button>
     <div class="experience-form-modal__content">
-        <button type="button" class="experience-form-modal__close" popovertarget="add-skill-modal" popovertargetaction="hide" aria-label="Close add skill form">&times;</button>
-        <h2 id="add-skill-modal-title">Add a New Skill</h2>
-        
+        <button type="button" class="experience-form-modal__close" popovertarget="skill-modal" popovertargetaction="hide" aria-label="Close skill form">&times;</button>
+        <h2 id="skill-modal-title">Add a New Skill</h2>
+
         <form id="skill-form" method="post" action="{% url 'main:create_skill' %}" class="experience-card--form">
             {% csrf_token %}
             {% for field in form %}
@@ -16,8 +19,8 @@
                 </div>
             {% endfor %}
             <div class="experience-form-modal__actions">
-                <button type="button" class="button button-secondary" popovertarget="add-skill-modal" popovertargetaction="hide">Cancel</button>
-                <button type="submit" class="button">Add Skill</button>
+                <button type="button" class="button button-secondary" popovertarget="skill-modal" popovertargetaction="hide">Cancel</button>
+                <button type="submit" id="skill-form-submit" class="button">Add Skill</button>
             </div>
         </form>
 

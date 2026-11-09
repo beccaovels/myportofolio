@@ -15,17 +15,22 @@
                     <p class="section-subtitle">A visual snapshot of the tools and technologies I use across programming, web development, and workflow.</p>
                 </div>
                 {% if user.is_superuser %}
-                <button type="button" class="btn btn-primary" popovertarget="add-skill-modal">
+                <button type="button" id="add-skill-button" class="btn btn-primary" popovertarget="skill-modal">
                     <span aria-hidden="true">+</span> Add Skill
                 </button>
                 {% endif %}
             </div>
 
-            <!-- SEARCH FORM -->
+            <!-- SEARCH + SORT -->
             <form id="skill-search-form" class="skill-search">
                 <input type="search" id="search-input" name="name" value="{{ title_query }}"
                        placeholder="Search technologies..." class="skill-search__input"
                        aria-label="Search technologies">
+                <select id="sort-select" name="ordering" class="skill-search__input skill-sort" aria-label="Sort skills">
+                    <option value="newest">Newest first</option>
+                    <option value="name">Name A–Z</option>
+                    <option value="stars">Most starred</option>
+                </select>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
 
@@ -50,7 +55,8 @@
     </section>
 </main>
 
-{% if user.is_superuser %}
+{# Owner adds and edits; Editors only edit. The API enforces this either way. #}
+{% if user.is_superuser or is_editor %}
     {% include "components/skill_form_modal.html" %}
 {% endif %}
 
@@ -58,12 +64,11 @@
 {# the cards no longer render <form>{% csrf_token %}</form> blocks. #}
 {% csrf_token %}
 <script>
-    // DRF endpoints (Tutorial 7). The zero UUID is a placeholder swapped for a real id.
+    // DRF endpoints (Tutorial 7 / Assignment 6). The zero UUID is a placeholder swapped for a real id.
     const PLACEHOLDER_ID = '00000000-0000-0000-0000-000000000000';
     const SKILL_LIST_ENDPOINT = "{% url 'api:skill-list' %}";
     const SKILL_DETAIL_ENDPOINT = "{% url 'api:skill-detail' '00000000-0000-0000-0000-000000000000' %}";
     const SKILL_STAR_ENDPOINT = "{% url 'api:skill-star' '00000000-0000-0000-0000-000000000000' %}";
-    const SKILL_EDIT_URL = "{% url 'main:update_skill' '00000000-0000-0000-0000-000000000000' %}";
     const LOGIN_URL = "{% url 'main:login' %}";
     const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
     const IS_EDITOR = "{{ is_editor|yesno:'true,false' }}" === "true";
@@ -78,9 +83,14 @@
     const gridContainer = document.getElementById('grid');
     const searchForm = document.getElementById('skill-search-form');
     const searchInput = document.getElementById('search-input');
+    const sortSelect = document.getElementById('sort-select');
+    const skillModal = document.getElementById('skill-modal');
     const skillForm = document.getElementById('skill-form');
+    const addSkillButton = document.getElementById('add-skill-button');
     let skillsAbortController;
     let searchDebounceTimer;
+    let editingSkillId = null;           // null = create mode, uuid = edit mode
+    const skillsById = new Map();        // latest API data, used to prefill the edit form
 
     function getCookie(name) {
         const prefix = `${name}=`;
@@ -111,8 +121,7 @@
     }
 
     function closeSkillModal() {
-        const modal = document.getElementById('add-skill-modal');
-        if (modal && modal.matches(':popover-open')) modal.hidePopover();
+        if (skillModal && skillModal.matches(':popover-open')) skillModal.hidePopover();
     }
 
     function buildStarHtml(skill) {
@@ -151,7 +160,8 @@
         // UI only: the API's permission classes are what actually enforce these roles
         const actionsHtml = [];
         if (IS_SUPERUSER || IS_EDITOR) {
-            actionsHtml.push(`<a href="${skillEndpoint(SKILL_EDIT_URL, skillId)}" class="btn btn-secondary">Edit</a>`);
+            actionsHtml.push(`<button type="button" class="btn btn-secondary"
+                                      data-action="edit" data-id="${skillId}">Edit</button>`);
         }
         if (IS_SUPERUSER) {
             actionsHtml.push(`<button type="button" class="btn btn-danger" data-action="delete"
@@ -179,14 +189,17 @@
         return fragment;
     }
 
-    async function fetchSkills(searchQuery = '') {
+    // Reads the current search text and sort choice, then loads the list
+    async function fetchSkills() {
         if (skillsAbortController) skillsAbortController.abort();
         skillsAbortController = new AbortController();
 
         try {
             displayPageSection({ showLoading: true });
             const url = new URL(SKILL_LIST_ENDPOINT, window.location.origin);
+            const searchQuery = searchInput.value.trim();
             if (searchQuery) url.searchParams.set('name', searchQuery);
+            url.searchParams.set('ordering', sortSelect.value);
 
             const response = await fetch(url, {
                 headers: { Accept: 'application/json' },
@@ -195,6 +208,8 @@
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const skills = await response.json();
+            skillsById.clear();
+            skills.forEach(skill => skillsById.set(skill.id, skill));
             gridContainer.replaceChildren(...skills.map(buildSkillCardElement));
             displayPageSection({ showGrid: skills.length > 0, showEmpty: skills.length === 0 });
         } catch (error) {
@@ -214,6 +229,13 @@
         return messages.join(' ') || `Request failed (HTTP ${status}).`;
     }
 
+    // Toast title by HTTP status: 400 = validation, 403 = permission/CSRF
+    function errorTitle(error, fallback) {
+        if (error.status === 400) return 'Invalid input';
+        if (error.status === 403) return 'Not allowed';
+        return fallback;
+    }
+
     // One place for POST/PATCH/DELETE: JSON body, CSRF header and error handling
     async function writeSkill(url, method, payload) {
         const response = await fetch(url, {
@@ -227,70 +249,120 @@
         });
         if (response.status === 204) return null; // DELETE: empty body, don't call .json()
         const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(apiErrorMessage(data, response.status));
+        if (!response.ok) {
+            const error = new Error(apiErrorMessage(data, response.status));
+            error.status = response.status;
+            throw error;
+        }
         return data;
     }
 
-    async function addSkill(event) {
+    // --- Add / Edit modal -------------------------------------------------------
+
+    function setModalMode(skill) {
+        editingSkillId = skill ? skill.id : null;
+        document.getElementById('skill-modal-title').textContent = skill ? `Edit ${skill.name}` : 'Add a New Skill';
+        document.getElementById('skill-form-submit').textContent = skill ? 'Save Changes' : 'Add Skill';
+        skillForm.reset();
+        if (skill) {
+            // Prefill through .value (never innerHTML), so stored text can't inject markup
+            FORM_FIELDS.forEach(name => {
+                if (skillForm.elements[name]) skillForm.elements[name].value = skill[name] ?? '';
+            });
+        }
+    }
+
+    function openEditModal(id) {
+        const skill = skillsById.get(id);
+        if (!skill || !skillModal) return;
+        setModalMode(skill);
+        skillModal.showPopover();
+        skillForm.elements.name?.focus();
+    }
+
+    async function submitSkill(event) {
         event.preventDefault();
-        const submitButton = skillForm.querySelector('button[type="submit"]');
+        const submitButton = document.getElementById('skill-form-submit');
+        const isEdit = editingSkillId !== null;
         submitButton.disabled = true;
 
         try {
             // Pick only model fields so csrfmiddlewaretoken isn't sent as data
             const fields = new FormData(skillForm);
             const payload = Object.fromEntries(FORM_FIELDS.map(name => [name, fields.get(name) ?? '']));
-            await writeSkill(SKILL_LIST_ENDPOINT, 'POST', payload);
-            skillForm.reset();
+            if (isEdit) {
+                // PATCH: partial update, allowed for the owner and Editors
+                await writeSkill(skillEndpoint(SKILL_DETAIL_ENDPOINT, editingSkillId), 'PATCH', payload);
+            } else {
+                await writeSkill(SKILL_LIST_ENDPOINT, 'POST', payload);
+            }
             closeSkillModal();
-            showToast('Success', 'New skill added successfully!', 'success');
-            await fetchSkills(searchInput.value.trim());
+            setModalMode(null);
+            showToast('Success', isEdit ? 'Skill updated.' : 'New skill added successfully!', 'success');
+            await fetchSkills();
         } catch (error) {
-            showToast('Failed to add skill', error.message, 'error');
+            showToast(errorTitle(error, isEdit ? 'Failed to update skill' : 'Failed to add skill'), error.message, 'error');
         } finally {
             submitButton.disabled = false;
         }
     }
 
-    if (skillForm) skillForm.addEventListener('submit', addSkill);
+    if (skillForm) skillForm.addEventListener('submit', submitSkill);
+    // The Add button always opens a blank form, even after an edit was cancelled
+    if (addSkillButton) addSkillButton.addEventListener('click', () => setModalMode(null));
 
-    // Event delegation: the popovers live inside #grid, so one listener covers every card
+    // --- Card actions (event delegation) -----------------------------------------
+
+    // The popovers live inside #grid, so one listener covers every card, even after a refetch
     gridContainer.addEventListener('click', async function (event) {
         const button = event.target.closest('button[data-action]');
         if (!button || button.disabled) return;
         const { action, id } = button.dataset;
+
+        if (action === 'edit') {
+            openEditModal(id);
+            return;
+        }
         if (action === 'delete' && !window.confirm(`Are you sure you want to delete ${button.dataset.name}?`)) return;
 
         button.disabled = true;
         try {
             if (action === 'star') {
                 const skill = await writeSkill(skillEndpoint(SKILL_STAR_ENDPOINT, id), 'POST');
+                skillsById.set(skill.id, skill);
                 // Update in place so the open popover stays open
                 button.closest('.star-slot').innerHTML = buildStarHtml(skill);
                 showToast('Success', 'Star updated.', 'success');
             } else {
                 await writeSkill(skillEndpoint(SKILL_DETAIL_ENDPOINT, id), 'DELETE');
                 showToast('Success', 'Skill deleted.', 'success');
-                await fetchSkills(searchInput.value.trim());
+                await fetchSkills();
             }
         } catch (error) {
-            showToast('Request failed', error.message, 'error');
+            showToast(errorTitle(error, 'Request failed'), error.message, 'error');
         } finally {
             button.disabled = false;
         }
     });
 
+    // --- Search + sort -----------------------------------------------------------
+
     searchInput.addEventListener('input', function () {
         clearTimeout(searchDebounceTimer);
-        searchDebounceTimer = setTimeout(() => fetchSkills(searchInput.value.trim()), SEARCH_DEBOUNCE_DELAY);
+        searchDebounceTimer = setTimeout(fetchSkills, SEARCH_DEBOUNCE_DELAY);
+    });
+
+    sortSelect.addEventListener('change', function () {
+        clearTimeout(searchDebounceTimer);
+        fetchSkills();
     });
 
     searchForm.addEventListener('submit', function (event) {
         event.preventDefault();
         clearTimeout(searchDebounceTimer);
-        fetchSkills(searchInput.value.trim());
+        fetchSkills();
     });
 
-    fetchSkills(searchInput.value.trim());
+    fetchSkills();
 </script>
 {% endblock content %}
