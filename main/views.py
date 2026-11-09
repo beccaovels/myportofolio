@@ -101,7 +101,7 @@ def show_experience(request):
     return render(request, "experience.html", context)
 
 # function for starring feature exclusively for starred skills
-@login_required(login_url="/login")
+@login_required(login_url="/login/")
 def toggle_skill_star(request,id):
     skill = get_object_or_404(Skill, pk=id)
     if request.method == "POST":
