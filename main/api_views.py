@@ -2,10 +2,7 @@ from django.db.models import Count
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.decorators import (
-    api_view, authentication_classes, permission_classes,
-)
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -15,13 +12,34 @@ from main.permissions import IsPortfolioOwnerOrEditorOrReadOnly, IsPortfolioOwne
 from main.serializers import ExperienceSerializer, SkillSerializer
 
 
+# Authentication comes from REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"]
+# (Token first, then Session), so the same views serve the website (session
+# cookie + CSRF) and the Flutter app (Authorization: Token <key>).
+
+
+# --- Auth (Tutorial 10) -----------------------------------------------------
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def api_logout(request):
+    """Revoke the caller's token, so it can't be used again.
+
+    Login is DRF's built-in obtain_auth_token (see api_urls.py). request.auth
+    is the Token object for token requests and None for session requests.
+    """
+    if request.auth is not None:
+        request.auth.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# --- Experience (tutorial section) -------------------------------------------
+
 def _experience_queryset():
     # Prefetch stars once so the serializer doesn't query per card.
     return Experience.objects.prefetch_related("starred_by").order_by("-started_at", "id")
 
 
 @api_view(["GET", "HEAD", "POST"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def experience_list(request):
     if request.method in ("GET", "HEAD"):
@@ -41,7 +59,6 @@ def experience_list(request):
 
 
 @api_view(["GET", "HEAD", "PUT", "PATCH", "DELETE"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrReadOnly])
 def experience_detail(request, experience_id):
     experience = get_object_or_404(_experience_queryset(), pk=experience_id)
@@ -65,7 +82,6 @@ def experience_detail(request, experience_id):
 
 
 @api_view(["POST"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def experience_star(request, experience_id):
     experience = get_object_or_404(Experience, pk=experience_id)
@@ -105,7 +121,6 @@ def _order_skills(skills, ordering):
 
 
 @api_view(["GET", "HEAD", "POST"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def skill_list(request):
     if request.method in ("GET", "HEAD"):
@@ -125,7 +140,6 @@ def skill_list(request):
 
 
 @api_view(["GET", "HEAD", "PUT", "PATCH", "DELETE"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsPortfolioOwnerOrEditorOrReadOnly])
 def skill_detail(request, skill_id):
     skill = get_object_or_404(_skill_queryset(), pk=skill_id)
@@ -148,7 +162,6 @@ def skill_detail(request, skill_id):
 
 
 @api_view(["POST"])
-@authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def skill_star(request, skill_id):
     skill = get_object_or_404(Skill, pk=skill_id)
