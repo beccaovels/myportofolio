@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # add deployment here
-ALLOWED_HOSTS = ["localhost","127.0.0.1","rebecca-love-myportofolio.pws.cs.ui.ac.id"]
+# 10.0.2.2 is the host PC as seen from the Android emulator (Flutter app).
+ALLOWED_HOSTS = ["localhost","127.0.0.1","10.0.2.2","rebecca-love-myportofolio.pws.cs.ui.ac.id"]
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,11 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "corsheaders",
     "main",
     "rest_framework",
+    # Token table + obtain_auth_token view for the Flutter app.
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
+    # Must run before CommonMiddleware so CORS headers are added to every
+    # response, including redirects and errors (needed for Flutter Web).
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -161,3 +168,26 @@ MAILERS = {
 # Origins are scheme + host only (no trailing slash), otherwise Django's
 # origin check never matches and HTTPS writes fail with 403.
 CSRF_TRUSTED_ORIGINS = ["https://rebecca-love-myportofolio.pws.cs.ui.ac.id"]
+
+# Django REST Framework authentication (Tutorial 10).
+# TokenAuthentication comes first so mobile clients send
+# `Authorization: Token <key>` and get 401 (not 403) when it is missing or
+# invalid. SessionAuthentication stays so the website's fetch() calls keep
+# working with the session cookie + CSRF token.
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+# CORS for Flutter Web (Chrome). Native Android apps don't use CORS.
+# Locally (PRODUCTION=False) every origin is allowed; in production only the
+# comma-separated origins in the CORS_ALLOWED_ORIGINS env var are allowed.
+CORS_ALLOW_ALL_ORIGINS = not PRODUCTION
+if PRODUCTION:
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip()
+        for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
